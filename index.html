@@ -108,7 +108,7 @@ const fxData = [
 function Card({label, value, sub, color}) {
   return React.createElement('div', {style:{background:'#fff',borderRadius:10,padding:'16px 18px',borderLeft:`4px solid ${color}`,boxShadow:'0 1px 3px rgba(0,0,0,0.08)'}},
     React.createElement('div',{style:{fontSize:12,color:'#6b7280',marginBottom:4}},label),
-    React.createElement('div',{style:{fontSize:16,fontWeight:700,color:'#111827',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}},value),
+    React.createElement('div',{style:{fontSize:18,fontWeight:700,color:'#111827'}},value),
     React.createElement('div',{style:{fontSize:11,color:'#9ca3af',marginTop:2}},sub)
   );
 }
@@ -125,7 +125,7 @@ function Table({cols, data, hl}) {
         const isHl = hl ? hl(row) : false;
         return React.createElement('tr',{key:ri,style:{background:isHl?'#fef9c3':ri%2===0?'#fff':'#f9fafb'}},
           cols.map((c,ci)=>
-            React.createElement('td',{key:ci,style:{padding:'6px 10px',borderBottom:'1px solid #e5e7eb',textAlign:c.a||'left',whiteSpace:'nowrap',color:'#374151',fontVariantNumeric:c.a==='right'?'tabular-nums':'normal'}},
+            React.createElement('td',{key:ci,style:{padding:'6px 10px',borderBottom:'1px solid #e5e7eb',textAlign:c.a||'left',whiteSpace:'nowrap',color:'#374151'}},
               c.r ? c.r(row) : row[c.k])
           )
         );
@@ -138,7 +138,7 @@ function FxChart() {
   const mn = Math.min(...fxData.map(d=>d.r))-10;
   const mx = Math.max(...fxData.map(d=>d.r))+10;
   const rng = mx-mn;
-  const w=700,h=200,pL=60,pR=50,pT=10,pB=30;
+  const w=700,h=200,pL=60,pR=20,pT=10,pB=30;
   const cW=w-pL-pR, cH=h-pT-pB;
   const pts = fxData.map((d,i)=>({x:pL+(i/(fxData.length-1))*cW, y:pT+cH-((d.r-mn)/rng)*cH, ...d}));
   const pathD = pts.map((p,i)=>`${i===0?'M':'L'} ${p.x} ${p.y}`).join(' ');
@@ -163,7 +163,7 @@ function FxChart() {
       ...pts.map((p,i)=>React.createElement('circle',{key:i,cx:p.x,cy:p.y,r:2.5,fill:'#3b82f6'})),
       ...labels,
       React.createElement('circle',{cx:pts[pts.length-1].x,cy:pts[pts.length-1].y,r:4,fill:'#dc2626'}),
-      React.createElement('text',{x:pts[pts.length-1].x-4,y:pts[pts.length-1].y-10,textAnchor:'end',fontSize:11,fill:'#dc2626',fontWeight:'bold'},fxData[fxData.length-1].r)
+      React.createElement('text',{x:pts[pts.length-1].x,y:pts[pts.length-1].y-10,textAnchor:'middle',fontSize:11,fill:'#dc2626',fontWeight:'bold'},fxData[fxData.length-1].r)
     )
   );
 }
@@ -222,11 +222,7 @@ function App() {
     React.createElement('div',{style:{maxWidth:1400,margin:'0 auto'}},
       // Header
       React.createElement('div',{style:{marginBottom:20}},
-        React.createElement('div',{style:{display:'flex',alignItems:'center',gap:12}},
-          React.createElement('h1',{style:{fontSize:22,fontWeight:800,color:'#111827',margin:0}},'RNR 2026년 수입원가 산출표'),
-          React.createElement('a',{href:'https://docs.google.com/spreadsheets/d/1Nxh8QbxTghlqNC-Rsk6WkUpFCE1ETMoPbUHPze0SitE/edit?gid=956759540#gid=956759540',target:'_blank',rel:'noopener noreferrer',style:{display:'inline-flex',alignItems:'center',gap:4,padding:'4px 10px',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:6,fontSize:12,fontWeight:600,color:'#059669',textDecoration:'none'}},
-            '📊 원본 시트')
-        ),
+        React.createElement('h1',{style:{fontSize:22,fontWeight:800,color:'#111827',margin:0}},'RNR 2026년 수입원가 산출표'),
         React.createElement('p',{style:{fontSize:13,color:'#6b7280',margin:'4px 0 0'}},'기준일: 2026-04-10 | 회계처리용 통합 데이터')
       ),
       // Tabs
@@ -241,7 +237,7 @@ function App() {
           React.createElement(Card,{label:'라이센스/워런티 합계',value:fmt(lcTotal)+'원',sub:fmtU(licData.reduce((s,d)=>s+d.usd,0)),color:'#8b5cf6'}),
           React.createElement(Card,{label:'총 합계',value:fmt(grand)+'원',sub:fmtU(poData.reduce((s,d)=>s+d.usd,0)+licData.reduce((s,d)=>s+d.usd,0)),color:'#059669'}),
           React.createElement(Card,{label:'미상환 L/C',value:fmtU(lcData.reduce((s,d)=>s+d.usd,0)),sub:'D-Day: '+lcData[0].dDay+'일 / '+lcData[1].dDay+'일',color:'#dc2626'}),
-          React.createElement(Card,{label:'최신 고시환율',value:'₩'+Number(fxData[fxData.length-1].r).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}),sub:fxData[fxData.length-1].s+' ~ '+fxData[fxData.length-1].e,color:'#f59e0b'})
+          React.createElement(Card,{label:'최신 고시환율',value:'₩'+fxData[fxData.length-1].r.toLocaleString(),sub:fxData[fxData.length-1].s+' ~ '+fxData[fxData.length-1].e,color:'#f59e0b'})
         ),
         React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}},
           React.createElement(VendorChart),
@@ -249,56 +245,24 @@ function App() {
         ),
         // Monthly
         React.createElement('div',{style:{background:'#fff',borderRadius:10,padding:20,boxShadow:'0 1px 3px rgba(0,0,0,0.08)',marginTop:16}},
-          React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}},
-            React.createElement('div',{style:{fontSize:14,fontWeight:700,color:'#111827'}},'월별 수입원가 현황'),
-            React.createElement('div',{style:{display:'flex',gap:16,fontSize:11}},
-              React.createElement('span',{style:{display:'flex',alignItems:'center',gap:4}},React.createElement('span',{style:{width:10,height:10,borderRadius:2,background:'#3b82f6',display:'inline-block'}}),' 장비/부품'),
-              React.createElement('span',{style:{display:'flex',alignItems:'center',gap:4}},React.createElement('span',{style:{width:10,height:10,borderRadius:2,background:'#8b5cf6',display:'inline-block'}}),' 라이센스/워런티')
-            )
-          ),
-          React.createElement('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:12}},
-            React.createElement('thead',null,
-              React.createElement('tr',null,
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'left',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600,width:80}},'귀속월'),
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'left',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600}},''),
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'right',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600,width:120}},'장비/부품'),
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'right',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600,width:120}},'라이센스'),
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'right',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600,width:130}},'합계')
-              )
-            ),
-            React.createElement('tbody',null,
-              (()=>{
-                const m={};
-                poData.forEach(d=>{if(!m[d.month])m[d.month]={eq:0,lc:0};m[d.month].eq+=d.total;});
-                licData.forEach(d=>{if(!m[d.month])m[d.month]={eq:0,lc:0};m[d.month].lc+=d.total;});
-                const sorted=Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0]));
-                const mx=Math.max(...sorted.map(([,v])=>v.eq+v.lc));
-                const grandEq=sorted.reduce((s,[,v])=>s+v.eq,0);
-                const grandLc=sorted.reduce((s,[,v])=>s+v.lc,0);
-                return [...sorted.map(([mo,v],idx)=>
-                  React.createElement('tr',{key:mo,style:{background:idx%2===0?'#fff':'#f9fafb'}},
-                    React.createElement('td',{style:{padding:'8px',fontWeight:600,color:'#111827'}},mo),
-                    React.createElement('td',{style:{padding:'8px 4px'}},
-                      React.createElement('div',{style:{display:'flex',height:18,borderRadius:3,overflow:'hidden',background:'#f3f4f6'}},
-                        v.eq>0&&React.createElement('div',{style:{width:(v.eq/mx*100)+'%',background:'#3b82f6',borderRadius:'3px 0 0 3px'}}),
-                        v.lc>0&&React.createElement('div',{style:{width:(v.lc/mx*100)+'%',background:'#8b5cf6',borderRadius:v.eq>0?'0 3px 3px 0':'3px'}})
-                      )
-                    ),
-                    React.createElement('td',{style:{padding:'8px',textAlign:'right',fontVariantNumeric:'tabular-nums',color:'#374151'}},v.eq?fmt(v.eq):'-'),
-                    React.createElement('td',{style:{padding:'8px',textAlign:'right',fontVariantNumeric:'tabular-nums',color:'#374151'}},v.lc?fmt(v.lc):'-'),
-                    React.createElement('td',{style:{padding:'8px',textAlign:'right',fontWeight:600,fontVariantNumeric:'tabular-nums',color:'#111827'}},fmt(v.eq+v.lc)+'원')
-                  )
+          React.createElement('div',{style:{fontSize:14,fontWeight:700,marginBottom:12,color:'#111827'}},'월별 수입원가 현황'),
+          (()=>{
+            const m={};
+            poData.forEach(d=>{if(!m[d.month])m[d.month]={eq:0,lc:0};m[d.month].eq+=d.total;});
+            licData.forEach(d=>{if(!m[d.month])m[d.month]={eq:0,lc:0};m[d.month].lc+=d.total;});
+            const sorted=Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0]));
+            const mx=Math.max(...sorted.map(([,v])=>v.eq+v.lc));
+            return sorted.map(([mo,v])=>
+              React.createElement('div',{key:mo,style:{display:'flex',alignItems:'center',gap:12,marginBottom:6}},
+                React.createElement('span',{style:{width:70,fontSize:12,fontWeight:600,textAlign:'right'}},mo),
+                React.createElement('div',{style:{flex:1,display:'flex',height:16,borderRadius:3,overflow:'hidden',background:'#f3f4f6'}},
+                  v.eq>0&&React.createElement('div',{style:{width:(v.eq/mx*100)+'%',background:'#3b82f6'}}),
+                  v.lc>0&&React.createElement('div',{style:{width:(v.lc/mx*100)+'%',background:'#8b5cf6'}})
                 ),
-                React.createElement('tr',{key:'total',style:{background:'#f0f4ff',borderTop:'2px solid #d1d5db'}},
-                  React.createElement('td',{style:{padding:'8px',fontWeight:700,color:'#1e3a5f'}},'합계'),
-                  React.createElement('td',null),
-                  React.createElement('td',{style:{padding:'8px',textAlign:'right',fontWeight:700,fontVariantNumeric:'tabular-nums',color:'#1e3a5f'}},fmt(grandEq)),
-                  React.createElement('td',{style:{padding:'8px',textAlign:'right',fontWeight:700,fontVariantNumeric:'tabular-nums',color:'#1e3a5f'}},fmt(grandLc)),
-                  React.createElement('td',{style:{padding:'8px',textAlign:'right',fontWeight:700,fontVariantNumeric:'tabular-nums',color:'#1e3a5f'}},fmt(grandEq+grandLc)+'원')
-                )];
-              })()
-            )
-          )
+                React.createElement('span',{style:{fontSize:11,color:'#6b7280',minWidth:120,textAlign:'right'}},fmt(v.eq+v.lc))
+              )
+            );
+          })()
         )
       ),
 
@@ -312,8 +276,7 @@ function App() {
         React.createElement(Table,{
           cols:[
             {k:'no',l:'No.',a:'center'},{k:'po',l:'PO No.'},{k:'vendor',l:'업체'},{k:'type',l:'구분'},{k:'item',l:'품명'},
-            {l:'Invoice(USD)',a:'right',r:r=>fmtU(r.usd)},{l:'적용환율',a:'right',r:r=>r.rate?Number(r.rate).toLocaleString('ko-KR',{minimumFractionDigits:1,maximumFractionDigits:1}):'-'},
-            {l:'관세',a:'right',r:r=>fmt(r.tariff)},{l:'부가세',a:'right',r:r=>fmt(r.vat)},
+            {l:'Invoice(USD)',a:'right',r:r=>fmtU(r.usd)},{l:'관세',a:'right',r:r=>fmt(r.tariff)},{l:'부가세',a:'right',r:r=>fmt(r.vat)},
             {l:'운송료',a:'right',r:r=>fmt(r.shipFee)},{l:'총 수입원가',a:'right',r:r=>fmt(r.total)},
             {k:'qty',l:'수량',a:'center'},{l:'개당 원가',a:'right',r:r=>fmt(r.unit)},{k:'month',l:'귀속월'}
           ],
@@ -327,37 +290,25 @@ function App() {
       ),
 
       // LICENSE
-      tab==='lic' && React.createElement(React.Fragment,null,
-        React.createElement(Table,{
-          cols:[
-            {k:'no',l:'No.',a:'center'},{k:'po',l:'PO No.'},{k:'vendor',l:'업체'},{k:'type',l:'구분'},{k:'item',l:'품명'},
-            {l:'Invoice(USD)',a:'right',r:r=>fmtU(r.usd)},{k:'remit',l:'송금일'},
-            {l:'수입원가(KRW)',a:'right',r:r=>fmt(r.total)},{k:'start',l:'계약시작'},{k:'end',l:'계약종료'}
-          ],
-          data:licData, hl:r=>r.total===0
-        }),
-        React.createElement('div',{style:{marginTop:12,padding:12,background:'#f5f3ff',borderRadius:8,fontSize:12,color:'#5b21b6'}},
-          React.createElement('strong',null,'합계: '),
-          'Invoice '+fmtU(licData.reduce((s,d)=>s+d.usd,0))+' | 수입원가 '+fmt(licData.reduce((s,d)=>s+d.total,0))+'원'
-        )
-      ),
+      tab==='lic' && React.createElement(Table,{
+        cols:[
+          {k:'no',l:'No.',a:'center'},{k:'po',l:'PO No.'},{k:'vendor',l:'업체'},{k:'type',l:'구분'},{k:'item',l:'품명'},
+          {l:'Invoice(USD)',a:'right',r:r=>fmtU(r.usd)},{k:'remit',l:'송금일'},
+          {l:'수입원가(KRW)',a:'right',r:r=>fmt(r.total)},{k:'start',l:'계약시작'},{k:'end',l:'계약종료'}
+        ],
+        data:licData, hl:r=>r.total===0
+      }),
 
       // REMITTANCE
-      tab==='remit' && React.createElement(React.Fragment,null,
-        React.createElement(Table,{
-          cols:[
-            {k:'no',l:'No.',a:'center'},{k:'date',l:'송금일'},{k:'to',l:'수취인'},{k:'ref',l:'PO 참조'},
-            {l:'USD금액',a:'right',r:r=>fmtU(r.usd)},{l:'적용환율',a:'right',r:r=>r.rate?Number(r.rate).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}):'-'},
-            {l:'수수료(KRW)',a:'right',r:r=>fmt(r.fee)},{l:'전신료(KRW)',a:'right',r:r=>fmt(r.wire)},
-            {l:'KRW총액',a:'right',r:r=>fmt(r.krw)}
-          ],
-          data:remitData, hl:r=>r.krw===0
-        }),
-        React.createElement('div',{style:{marginTop:12,padding:12,background:'#eff6ff',borderRadius:8,fontSize:12,color:'#1e40af'}},
-          React.createElement('strong',null,'합계: '),
-          '송금 '+remitData.length+'건 | USD '+fmtU(remitData.reduce((s,d)=>s+d.usd,0))+' | KRW '+fmt(remitData.reduce((s,d)=>s+d.krw,0))+'원'
-        )
-      ),
+      tab==='remit' && React.createElement(Table,{
+        cols:[
+          {k:'no',l:'No.',a:'center'},{k:'date',l:'송금일'},{k:'to',l:'수취인'},{k:'ref',l:'PO 참조'},
+          {l:'USD금액',a:'right',r:r=>fmtU(r.usd)},{l:'적용환율',a:'right',r:r=>r.rate?r.rate.toLocaleString():'-'},
+          {l:'수수료(KRW)',a:'right',r:r=>fmt(r.fee)},{l:'전신료(KRW)',a:'right',r:r=>fmt(r.wire)},
+          {l:'KRW총액',a:'right',r:r=>fmt(r.krw)}
+        ],
+        data:remitData, hl:r=>r.krw===0
+      }),
 
       // L/C
       tab==='lc' && React.createElement(React.Fragment,null,
@@ -382,7 +333,7 @@ function App() {
         React.createElement(Table,{
           cols:[
             {k:'s',l:'적용 시작일'},{k:'e',l:'적용 종료일'},
-            {l:'수입환율 (₩/USD)',a:'right',r:r=>React.createElement('span',{style:{fontWeight:600}},Number(r.r).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}))},
+            {l:'수입환율 (₩/USD)',a:'right',r:r=>React.createElement('span',{style:{fontWeight:600}},r.r.toLocaleString())},
             {l:'변동',a:'right',r:r=>{
               const idx=fxData.indexOf(r); if(idx===0) return '-';
               const d=r.r-fxData[idx-1].r;
