@@ -100,6 +100,17 @@ const lcData = [
   {no:2,po:"GPO-446-2",vendor:"GDC",usd:190470,bank:"신한은행",lc:"M88JX2511NU00018",open:"2025-11-11",exp:"2026-05-10",days:"180 Days",accept:"2025-12-08",due:"2026-06-09",dDay:60},
 ];
 
+const lcBankData = [
+  {bank:"신한은행",limit:500000,open:412338,avail:87662,active:"활성",note:"LC 현재 활성 사용 중"},
+  {bank:"하나은행",limit:200000,open:0,avail:200000,active:"활성",note:"현재 미사용"},
+  {bank:"우리은행",limit:700000,open:0,avail:700000,active:"비활성",note:"신한·하나만 활성 (Slack 2026-03-16)"},
+];
+
+const lcCustomsData = [
+  {po:"CPO-672",decNo:"1421425100608M",decDate:"2025-10-30",decRate:1433,tariff:83050,vat:31860000,broker:"아인관세사",brokerFee:667034,shipper:"진로직스",shipFee:2733444,overseaFee:6124.77},
+  {po:"GPO-446-2",decNo:"1421425100667M",decDate:"2025-11-19",decRate:1465.2,tariff:0,vat:28259850,broker:"아인관세사",brokerFee:595197,shipper:"진로직스",shipFee:4553880,overseaFee:5310.14},
+];
+
 const fxData = [
   {s:"2025-10-05",e:"2025-10-11",r:1405.75},{s:"2025-10-12",e:"2025-10-18",r:1401.9},{s:"2025-10-19",e:"2025-10-25",r:1424.02},{s:"2025-10-26",e:"2025-11-01",r:1426.02},{s:"2025-11-02",e:"2025-11-08",r:1431.82},{s:"2025-11-09",e:"2025-11-15",r:1437.34},{s:"2025-11-16",e:"2025-11-22",r:1461.36},{s:"2025-11-23",e:"2025-11-29",r:1463.08},{s:"2025-11-30",e:"2025-12-06",r:1469.3},{s:"2025-12-07",e:"2025-12-13",r:1468.96},{s:"2025-12-14",e:"2025-12-20",r:1470.28},{s:"2025-12-21",e:"2025-12-27",r:1474.96},{s:"2025-12-28",e:"2026-01-03",r:1475.18},{s:"2026-01-04",e:"2026-01-10",r:1436.5},{s:"2026-01-11",e:"2026-01-17",r:1446.46},{s:"2026-01-18",e:"2026-01-24",r:1467.96},{s:"2026-01-25",e:"2026-01-31",r:1473.06},{s:"2026-02-01",e:"2026-02-07",r:1442.88},{s:"2026-02-08",e:"2026-02-14",r:1451.66},{s:"2026-02-15",e:"2026-02-21",r:1458.02},{s:"2026-02-22",e:"2026-02-28",r:1446.9},{s:"2026-03-01",e:"2026-03-07",r:1439.26},{s:"2026-03-08",e:"2026-03-14",r:1460.75},{s:"2026-03-15",e:"2026-03-21",r:1477.5},{s:"2026-03-22",e:"2026-03-28",r:1492.56},{s:"2026-03-29",e:"2026-04-04",r:1500.92},{s:"2026-04-05",e:"2026-04-11",r:1515.72},
 ];
@@ -312,19 +323,54 @@ function App() {
 
       // L/C
       tab==='lc' && React.createElement(React.Fragment,null,
-        React.createElement('div',{style:{background:'#fef2f2',borderRadius:8,padding:16,marginBottom:16,border:'1px solid #fecaca'}},
-          React.createElement('div',{style:{fontSize:14,fontWeight:700,color:'#991b1b',marginBottom:4}},'미상환 L/C 합계: '+fmtU(lcData.reduce((s,d)=>s+d.usd,0))),
-          React.createElement('div',{style:{fontSize:12,color:'#dc2626'}},'기준일: 2026-04-10')
+        // 미상환 요약 카드
+        React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:12,marginBottom:20}},
+          React.createElement(Card,{label:'미상환 L/C 합계',value:fmtU(lcData.reduce((s,d)=>s+d.usd,0)),sub:'기준일: 2026-04-10',color:'#dc2626'}),
+          React.createElement(Card,{label:'총 L/C 한도',value:fmtU(lcBankData.reduce((s,d)=>s+d.limit,0)),sub:'신한+하나+우리',color:'#3b82f6'}),
+          React.createElement(Card,{label:'잔여 가용 한도',value:fmtU(lcBankData.reduce((s,d)=>s+d.avail,0)),sub:'활성 은행 기준',color:'#059669'}),
+          React.createElement(Card,{label:'가장 빠른 상환',value:'D-'+Math.min(...lcData.map(d=>d.dDay)),sub:lcData.reduce((a,b)=>a.dDay<b.dDay?a:b).po+' ('+lcData.reduce((a,b)=>a.dDay<b.dDay?a:b).due+')',color:'#f59e0b'})
         ),
+        // 은행별 한도 현황
+        React.createElement('div',{style:{fontSize:14,fontWeight:700,marginBottom:10,color:'#111827'}},'은행별 Usance L/C 한도 현황'),
+        React.createElement(Table,{
+          cols:[
+            {k:'bank',l:'은행'},{l:'총 한도(USD)',a:'right',r:r=>fmtU(r.limit)},{l:'현재 오픈(USD)',a:'right',r:r=>fmtU(r.open)},
+            {l:'잔여 가용(USD)',a:'right',r:r=>fmtU(r.avail)},
+            {l:'활성',a:'center',r:r=>React.createElement('span',{style:{color:r.active==='활성'?'#059669':'#9ca3af',fontWeight:600}},r.active)},
+            {k:'note',l:'비고'}
+          ],
+          data:lcBankData
+        }),
+        // 합계행
+        React.createElement('div',{style:{marginTop:-1,padding:'8px 12px',background:'#f3f4f6',borderRadius:'0 0 8px 8px',border:'1px solid #e5e7eb',borderTop:'none',display:'flex',justifyContent:'space-between',fontSize:12,fontWeight:700}},
+          React.createElement('span',null,'합계'),
+          React.createElement('span',null,'한도 '+fmtU(lcBankData.reduce((s,d)=>s+d.limit,0))+' | 오픈 '+fmtU(lcBankData.reduce((s,d)=>s+d.open,0))+' | 가용 '+fmtU(lcBankData.reduce((s,d)=>s+d.avail,0)))
+        ),
+        // 미상환 L/C 현황
+        React.createElement('div',{style:{fontSize:14,fontWeight:700,marginTop:24,marginBottom:10,color:'#111827'}},'미상환 L/C 현황'),
         React.createElement(Table,{
           cols:[
             {k:'no',l:'No.',a:'center'},{k:'po',l:'PO No.'},{k:'vendor',l:'업체'},
             {l:'개설금액(USD)',a:'right',r:r=>fmtU(r.usd)},{k:'bank',l:'개설은행'},{k:'lc',l:'L/C No.'},
-            {k:'days',l:'기간'},{k:'accept',l:'인수일'},{k:'due',l:'상환예정일'},
-            {l:'D-Day',a:'center',r:r=>React.createElement('span',{style:{color:'#dc2626',fontWeight:700}},'D-'+r.dDay)}
+            {k:'open',l:'개설일'},{k:'exp',l:'만기일'},{k:'days',l:'기간'},{k:'accept',l:'인수일'},{k:'due',l:'상환예정일'},
+            {l:'D-Day',a:'center',r:r=>React.createElement('span',{style:{padding:'2px 8px',borderRadius:12,background:r.dDay<=30?'#fef2f2':r.dDay<=60?'#fffbeb':'#f0fdf4',color:r.dDay<=30?'#dc2626':r.dDay<=60?'#d97706':'#059669',fontWeight:700,fontSize:11}},'D-'+r.dDay)}
           ],
           data:lcData
-        })
+        }),
+        // 수입/통관 정보
+        React.createElement('div',{style:{fontSize:14,fontWeight:700,marginTop:24,marginBottom:10,color:'#111827'}},'수입/통관 정보'),
+        React.createElement(Table,{
+          cols:[
+            {k:'po',l:'PO No.'},{k:'decNo',l:'수입신고번호'},{k:'decDate',l:'수리일자'},
+            {l:'신고환율(₩)',a:'right',r:r=>r.decRate?r.decRate.toLocaleString():'-'},
+            {l:'관세(KRW)',a:'right',r:r=>fmt(r.tariff)},{l:'부가세(KRW)',a:'right',r:r=>fmt(r.vat)},
+            {k:'broker',l:'관세사'},{l:'관세사비',a:'right',r:r=>fmt(r.brokerFee)},
+            {k:'shipper',l:'운송사'},{l:'운송료',a:'right',r:r=>fmt(r.shipFee)},
+            {l:'해외수수료(USD)',a:'right',r:r=>fmtU(r.overseaFee)}
+          ],
+          data:lcCustomsData
+        }),
+        React.createElement('div',{style:{marginTop:12,fontSize:11,color:'#9ca3af'}},'※ 현재 오픈 = 미상환 L/C(상환확정일 비어있는 건)의 개설금액 합계 → 상환 시 자동 반영  |  출처: 총 한도 – Slack 2024-11-19 / 활성 여부 – Slack 2026-03-16')
       ),
 
       // FX
