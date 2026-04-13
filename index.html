@@ -41,7 +41,7 @@ const poData = [
   {no:18,po:"CPO693",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2026-02-18",remitDate:"-",usd:35674,rate:0,krw:0,tariff:0,vat:0,broker:"-",brokerFee:0,shipper:"-",shipFee:0,sub:0,total:0,qty:1,unit:0,month:"2026-02",item:"Projector (한국)"},
   {no:19,po:"GPO468-1",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2026-02-27",remitDate:"-",usd:36190,rate:0,krw:0,tariff:0,vat:5395574,broker:"조운관세사",brokerFee:137864,shipper:"진로직스",shipFee:1232133,sub:5533438,total:6765571,qty:10,unit:676557,month:"2026-03",item:"SR-1000 IMB (10EA)"},
   {no:20,po:"GPO472",vendor:"GDC",terms:"Net 30 days",type:"부품",poDate:"2026-03-07",remitDate:"-",usd:180,rate:0,krw:0,tariff:0,vat:26836,broker:"조운관세사",brokerFee:536,shipper:"진로직스",shipFee:6128,sub:27372,total:33500,qty:1,unit:33500,month:"2026-03",item:"TMS Parts"},
-  {no:21,po:"GPO468-2",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2026-03-07",remitDate:"-",usd:21280,rate:0,krw:0,tariff:0,vat:4747530,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:904960,sub:4747530,total:5652490,qty:4,unit:1413123,month:"2026-03",item:"IMB"},
+  {no:21,po:"GPO468-2",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2026-03-07",remitDate:"-",usd:21280,rate:0,krw:0,tariff:0,vat:4747530,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:904960,sub:4747530,total:5652490,qty:4,unit:1413122,month:"2026-03",item:"IMB"},
   {no:22,po:"CPO695-1",vendor:"Christie",terms:"Net 45 days",type:"부품(Fan)",poDate:"2026-03-17",remitDate:"-",usd:2058,rate:0,krw:0,tariff:0,vat:350480,broker:"운서합동",brokerFee:0,shipper:"DHL",shipFee:6264783,sub:350480,total:6615263,qty:7,unit:945038,month:"2026-03",item:"Fan (7EA)"},
   {no:23,po:"CPO695-2",vendor:"Christie",terms:"Net 45 days",type:"부품(Filter)",poDate:"2026-03-17",remitDate:"-",usd:1977,rate:0,krw:0,tariff:0,vat:317310,broker:"운서합동",brokerFee:0,shipper:"DHL",shipFee:1454605,sub:368100,total:1822705,qty:15,unit:121514,month:"2026-03",item:"Filter+Fan (15EA)"},
 ];
@@ -238,7 +238,7 @@ function App() {
           React.createElement('a',{href:'https://docs.google.com/spreadsheets/d/1Nxh8QbxTghlqNC-Rsk6WkUpFCE1ETMoPbUHPze0SitE/edit?gid=956759540#gid=956759540',target:'_blank',rel:'noopener noreferrer',style:{display:'inline-flex',alignItems:'center',gap:4,padding:'4px 10px',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:6,fontSize:12,fontWeight:600,color:'#059669',textDecoration:'none'}},
             '📊 원본 시트')
         ),
-        React.createElement('p',{style:{fontSize:13,color:'#6b7280',margin:'4px 0 0'}},'기준일: 2026-04-13 | 회계처리용 통합 데이터')
+        React.createElement('p',{style:{fontSize:13,color:'#6b7280',margin:'4px 0 0'}},'기준일: 2026-04-10 | 회계처리용 통합 데이터')
       ),
       // Tabs
       React.createElement('div',{style:{display:'flex',gap:0,marginBottom:20,borderBottom:'2px solid #e5e7eb',width:'100%'}},
@@ -374,7 +374,7 @@ function App() {
       tab==='lc' && React.createElement(React.Fragment,null,
         // 요약 카드
         React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:12,marginBottom:20}},
-          React.createElement(Card,{label:'미상환 L/C 합계',value:fmtU(lcData.reduce((s,d)=>s+d.usd,0)),sub:'기준일: 2026-04-13',color:'#dc2626'}),
+          React.createElement(Card,{label:'미상환 L/C 합계',value:fmtU(lcData.reduce((s,d)=>s+d.usd,0)),sub:'기준일: 2026-04-10',color:'#dc2626'}),
           React.createElement(Card,{label:'총 L/C 한도',value:fmtU(lcBankData.reduce((s,d)=>s+d.limit,0)),sub:'신한+하나+우리',color:'#3b82f6'}),
           React.createElement(Card,{label:'잔여 가용 한도',value:fmtU(lcBankData.reduce((s,d)=>s+d.avail,0)),sub:'활성 은행 기준',color:'#059669'}),
           React.createElement(Card,{label:'가장 빠른 상환',value:'D-'+Math.min(...lcData.map(d=>d.dDay)),sub:lcData.reduce((a,b)=>a.dDay<b.dDay?a:b).po+' ('+lcData.reduce((a,b)=>a.dDay<b.dDay?a:b).due+')',color:'#f59e0b'})
@@ -434,7 +434,7 @@ function App() {
         })
       ),
 
-      React.createElement('div',{style:{marginTop:24,textAlign:'center',fontSize:11,color:'#9ca3af'}},'RNR 수입원가 산출표 | 기준일 2026-04-13 | 노란색 하이라이트 = 미확인 항목')
+      React.createElement('div',{style:{marginTop:24,textAlign:'center',fontSize:11,color:'#9ca3af'}},'RNR 수입원가 산출표 | 기준일 2026-04-10 | 노란색 하이라이트 = 미확인 항목')
     )
   );
 }
