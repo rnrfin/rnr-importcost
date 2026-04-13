@@ -208,7 +208,7 @@ function FxChart() {
 
 function VendorChart() {
   const vm={};
-  [...poData2026,...licData2026].forEach(d=>{
+  [...poData.filter(d=>d.month&&d.month.startsWith('2026')),...licData.filter(d=>d.month&&d.month.startsWith('2026'))].forEach(d=>{
     if(!vm[d.vendor]) vm[d.vendor]={eq:0,lc:0};
     if(d.type?.includes('워런티')||d.type?.includes('라이센스')||d.type==='Inspection') vm[d.vendor].lc+=d.total;
     else vm[d.vendor].eq+=d.total;
