@@ -3,443 +3,401 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RNR 2026년 수입원가 산출표</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<title>RNR 수입원가 대시보드</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif; background: #f8fafc; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif; background:#f8fafc; color:#1e293b; font-size:13px; }
+.header { background:linear-gradient(135deg,#1e3a5f 0%,#2d5a8e 100%); color:white; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; }
+.header h1 { font-size:18px; font-weight:700; letter-spacing:-0.5px; }
+.header .meta { font-size:11px; opacity:0.8; text-align:right; }
+.tabs { display:flex; background:#fff; border-bottom:2px solid #e2e8f0; padding:0 24px; }
+.tab { flex:1; padding:12px 8px; text-align:center; cursor:pointer; font-size:12px; font-weight:500; color:#64748b; border-bottom:2px solid transparent; margin-bottom:-2px; white-space:nowrap; }
+.tab.active { color:#1e3a5f; border-bottom-color:#1e3a5f; font-weight:700; }
+.tab:hover:not(.active) { color:#334155; background:#f8fafc; }
+.content { padding:20px 24px; }
+.cards { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:20px; }
+.card { background:white; border-radius:8px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.08); border-left:3px solid #3b82f6; }
+.card.purple { border-left-color:#8b5cf6; }
+.card.green { border-left-color:#059669; }
+.card.red { border-left-color:#dc2626; }
+.card.orange { border-left-color:#f59e0b; }
+.card-label { font-size:10px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+.card-value { font-size:16px; font-weight:700; color:#1e293b; }
+.card-sub { font-size:10px; color:#94a3b8; margin-top:2px; }
+table { width:100%; border-collapse:collapse; background:white; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.08); font-size:12px; }
+th { background:#1e3a5f; color:white; padding:9px 10px; text-align:center; font-weight:600; font-size:11px; white-space:nowrap; position:sticky; top:0; }
+td { padding:7px 10px; border-bottom:1px solid #f1f5f9; vertical-align:middle; }
+tr:hover td { background:#f8fafc; }
+.num { text-align:right; } .ctr { text-align:center; }
+.highlight { background:#fef9c3!important; }
+.badge { display:inline-block; padding:2px 7px; border-radius:10px; font-size:10px; font-weight:600; }
+.badge-blue { background:#dbeafe; color:#1d4ed8; }
+.badge-purple { background:#ede9fe; color:#6d28d9; }
+.badge-green { background:#d1fae5; color:#065f46; }
+.badge-gray { background:#f1f5f9; color:#475569; }
+.badge-red { background:#fee2e2; color:#991b1b; }
+.badge-orange { background:#fef3c7; color:#92400e; }
+.total-row td { background:#1e3a5f!important; color:white; font-weight:700; }
+.table-wrap { overflow-x:auto; border-radius:8px; }
+.filter-bar { display:flex; gap:8px; margin-bottom:12px; align-items:center; }
+.filter-bar select { padding:5px 10px; border:1px solid #e2e8f0; border-radius:6px; font-size:12px; color:#334155; background:white; cursor:pointer; }
+.chart-wrap { background:white; border-radius:8px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,.08); margin-bottom:16px; }
+.chart-title { font-size:12px; font-weight:700; color:#475569; margin-bottom:12px; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState, useMemo } = React;
+const { useState } = React;
 
-const fmt = (v) => { if (!v || v==='-') return '-'; return Number(v).toLocaleString('ko-KR'); };
-const fmtU = (v) => { if (!v || v==='-') return '-'; return '$'+Number(v).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2}); };
+const BASE_DATE = "2026-04-10";
+const EQ_TOTAL = 664149159.0;
+const LIC_TOTAL = 328153490;
+const GRAND_TOTAL = 992302649.0;
+const LATEST_RATE = 1515.72;
+const LC_UNPAID_USD = 83050.0;
 
-const poData = [
-  {no:1,po:"CPO678-1",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2025-11-04",remitDate:"2025-12-16",usd:139083,rate:1479.7,krw:205801115,tariff:1682291,vat:20784342,broker:"다민관세사",brokerFee:149729,shipper:"진로직스",shipFee:2470670,sub:22616362,total:230936680,qty:1,unit:230936680,month:"2025-12",item:"Projector"},
-  {no:2,po:"GPO451",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2025-11-21",remitDate:"2025-12-29",usd:9060,rate:1439.1,krw:13038246,tariff:0,vat:1352610,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:0,sub:1352610,total:14421436,qty:1,unit:14421436,month:"2025-12",item:"IMB/Server"},
-  {no:3,po:"CPO679",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2025-11-26",remitDate:"2025-12-16",usd:4474,rate:1479.7,krw:6620178,tariff:560630,vat:756850,broker:"아인관세사",brokerFee:36000,shipper:"진로직스",shipFee:590823,sub:1353480,total:8566042,qty:1,unit:8566042,month:"2025-11",item:"Parts"},
-  {no:4,po:"CPO684",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2025-12-02",remitDate:"-",usd:362.25,rate:0,krw:0,tariff:0,vat:0,broker:"-",brokerFee:0,shipper:"-",shipFee:0,sub:0,total:0,qty:1,unit:0,month:"2025-12",item:"Parts (국내)"},
-  {no:5,po:"CPO680",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2025-12-04",remitDate:"2026-01-13",usd:252,rate:1479,krw:372708,tariff:29879,vat:37658,broker:"다민관세사",brokerFee:271,shipper:"진로직스",shipFee:4477,sub:67808,total:485073,qty:1,unit:485073,month:"2025-12",item:"Parts"},
-  {no:6,po:"GPO460",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2025-12-16",remitDate:"2026-01-21",usd:2710,rate:1475.7,krw:3999147,tariff:0,vat:399770,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:0,sub:399770,total:4431886,qty:1,unit:4431886,month:"2026-01",item:"SR-1000"},
-  {no:7,po:"LPO001",vendor:"Lemon",terms:"TT Advance",type:"장비",poDate:"2025-12-16",remitDate:"2026-01-30",usd:5056.8,rate:1445.5,krw:7309604,tariff:240450,vat:831820,broker:"아인관세사",brokerFee:36000,shipper:"진로직스",shipFee:581438,sub:1108270,total:9046222,qty:6,unit:1507704,month:"2026-03",item:"ICP+TPC (6EA)"},
-  {no:8,po:"CPO678-2",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2025-12-18",remitDate:"2026-03-06",usd:137850,rate:1477.6,krw:203687160,tariff:0,vat:19976300,broker:"조운관세사",brokerFee:263400,shipper:"진로직스",shipFee:2385057,sub:20239700,total:226361969,qty:3,unit:75453990,month:"2026-01",item:"CP4425-RGB (3EA)"},
-  {no:9,po:"CPO682",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2025-12-19",remitDate:"2026-02-04",usd:20174,rate:1454.7,krw:29347118,tariff:0,vat:3156262,broker:"아인관세사",brokerFee:92978,shipper:"진로직스",shipFee:1864148,sub:3249240,total:34500859,qty:1,unit:34500859,month:"2025-12",item:"Projector/Parts"},
-  {no:10,po:"CPO683",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2025-12-19",remitDate:"2026-02-04",usd:4620,rate:1454.7,krw:6720714,tariff:84170,vat:722808,broker:"아인관세사",brokerFee:14422,shipper:"진로직스",shipFee:426904,sub:821400,total:7978259,qty:1,unit:7978259,month:"2025-12",item:"Lens"},
-  {no:11,po:"MPO66",vendor:"MAG",terms:"T/T",type:"장비",poDate:"2025-12-20",remitDate:"2026-01-21",usd:9626.35,rate:1476,krw:14208493,tariff:0,vat:1704871,broker:"아인관세사",brokerFee:93591,shipper:"진로직스",shipFee:2690702,sub:1798462,total:18745177,qty:13,unit:1441937,month:"2026-02",item:"DCO-16000 (13EA)"},
-  {no:12,po:"MPO65",vendor:"MAG",terms:"T/T",type:"장비",poDate:"2025-12-20",remitDate:"2025-12-16",usd:4936,rate:1480,krw:7305280,tariff:0,vat:874189,broker:"아인관세사",brokerFee:47990,shipper:"진로직스",shipFee:1379682,sub:922179,total:9622763,qty:1,unit:9622763,month:"2026-02",item:"Audio Amp"},
-  {no:13,po:"CPO689",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2026-01-03",remitDate:"2026-02-19",usd:2745,rate:1451.7,krw:3984917,tariff:20430,vat:409790,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:162080,sub:430220,total:4584578,qty:1,unit:4584578,month:"2026-01",item:"Parts"},
-  {no:14,po:"GPO467",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2026-01-07",remitDate:"2026-04-01",usd:1700,rate:1506.4,krw:2560880,tariff:0,vat:250080,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:136050,sub:250080,total:2959495,qty:20,unit:147975,month:"2026-02",item:"IMB Parts"},
-  {no:15,po:"CPO692-1",vendor:"Christie",terms:"Net 45 days",type:"부품(렌즈)",poDate:"2026-01-13",remitDate:"-",usd:11000,rate:0,krw:0,tariff:1297810,vat:1752040,broker:"-",brokerFee:0,shipper:"DHL",shipFee:1553086,sub:3049850,total:4602936,qty:2,unit:2301468,month:"2026-02",item:"Lens (2EA)"},
-  {no:16,po:"CPO692-2",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2026-01-13",remitDate:"-",usd:286580,rate:0,krw:0,tariff:3450410,vat:42329590,broker:"조운관세사",brokerFee:250000,shipper:"진로직스",shipFee:2649525,sub:46030000,total:48679525,qty:28,unit:1738554,month:"2026-02",item:"Projector+Lens (28EA)"},
-  {no:17,po:"CPO690",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2026-01-28",remitDate:"2026-04-01",usd:9740,rate:1505.7,krw:14665518,tariff:0,vat:1493440,broker:"-",brokerFee:0,shipper:"DHL",shipFee:1561040,sub:1493440,total:17734348,qty:20,unit:886717,month:"2026-01",item:"ASSY Liquid Cooling (20EA)"},
-  {no:18,po:"CPO693",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2026-02-18",remitDate:"-",usd:35674,rate:0,krw:0,tariff:0,vat:0,broker:"-",brokerFee:0,shipper:"-",shipFee:0,sub:0,total:0,qty:1,unit:0,month:"2026-02",item:"Projector (한국)"},
-  {no:19,po:"GPO468-1",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2026-02-27",remitDate:"-",usd:36190,rate:0,krw:0,tariff:0,vat:5395574,broker:"조운관세사",brokerFee:137864,shipper:"진로직스",shipFee:1232133,sub:5533438,total:6765571,qty:10,unit:676557,month:"2026-03",item:"SR-1000 IMB (10EA)"},
-  {no:20,po:"GPO472",vendor:"GDC",terms:"Net 30 days",type:"부품",poDate:"2026-03-07",remitDate:"-",usd:180,rate:0,krw:0,tariff:0,vat:26836,broker:"조운관세사",brokerFee:536,shipper:"진로직스",shipFee:6128,sub:27372,total:33500,qty:1,unit:33500,month:"2026-03",item:"TMS Parts"},
-  {no:21,po:"GPO468-2",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2026-03-07",remitDate:"-",usd:21280,rate:0,krw:0,tariff:0,vat:4747530,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:0,sub:4747530,total:4747530,qty:4,unit:1186883,month:"2026-03",item:"IMB"},
-  {no:22,po:"CPO695-1",vendor:"Christie",terms:"Net 45 days",type:"부품(Fan)",poDate:"2026-03-17",remitDate:"-",usd:2058,rate:0,krw:0,tariff:0,vat:350480,broker:"운서합동",brokerFee:0,shipper:"DHL",shipFee:6264783,sub:350480,total:6615263,qty:7,unit:945038,month:"2026-03",item:"Fan (7EA)"},
-  {no:23,po:"CPO695-2",vendor:"Christie",terms:"Net 45 days",type:"부품(Filter)",poDate:"2026-03-17",remitDate:"-",usd:1977,rate:0,krw:0,tariff:0,vat:317310,broker:"운서합동",brokerFee:0,shipper:"DHL",shipFee:1454605,sub:368100,total:1822705,qty:15,unit:121514,month:"2026-03",item:"Filter+Fan (15EA)"},
-];
+const poData = [{"no": 1, "po": "CPO678-1", "vendor": "Christie", "payType": "Net 45 days", "type": "장비", "poDate": "2025-11-04", "remitDate": "2025-12-16", "usd": 139083.0, "rate": 1479.7, "krw": 205801115, "item": "Projector", "importDate": "2025-12-11", "importNo": "1219925801471M", "tariff": 1682291.0, "vat": 20784342.0, "customsFee": 149729.0, "transport": "진로직스", "shipFee": 2470670.0, "subtotal": 22616362.0, "total": 230888147.0, "qty": 1, "unit": 230888147, "month": "2025-12", "contractStart": "-", "contractEnd": "-"}, {"no": 2, "po": "GPO451", "vendor": "GDC", "payType": "Net 30 days", "type": "장비", "poDate": "2025-11-21", "remitDate": "2025-12-29", "usd": 9060.0, "rate": 1439.1, "krw": 13038246, "item": "IMB/Server", "importDate": "2025-12-05", "importNo": "2317625939353M", "tariff": 0, "vat": 1352610.0, "customsFee": 0, "transport": "Fedex", "shipFee": 0, "subtotal": 1352610.0, "total": 14390856.0, "qty": 1, "unit": 14390856, "month": "2025-12", "contractStart": "-", "contractEnd": "-"}, {"no": 3, "po": "CPO679", "vendor": "Christie", "payType": "Net 45 days", "type": "부품", "poDate": "2025-11-26", "remitDate": "2025-12-16", "usd": 4474.0, "rate": 1479.7, "krw": 6620178, "item": "Parts", "importDate": "2025-11-28", "importNo": "1421425100697M", "tariff": 560630.0, "vat": 756850.0, "customsFee": 36000.0, "transport": "진로직스", "shipFee": 590823.0, "subtotal": 1353480.0, "total": 8564481.0, "qty": 1, "unit": 8564481, "month": "2025-11", "contractStart": "-", "contractEnd": "-"}, {"no": 4, "po": "CPO684", "vendor": "Christie", "payType": "Net 45 days", "type": "부품", "poDate": "2025-12-02", "remitDate": "-", "usd": 362.25, "rate": 0, "krw": 0, "item": "Parts (국내)", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 0, "qty": 1, "unit": 0, "month": "2025-12", "contractStart": "-", "contractEnd": "-"}, {"no": 5, "po": "CPO680", "vendor": "Christie", "payType": "Net 45 days", "type": "부품", "poDate": "2025-12-04", "remitDate": "2026-01-13", "usd": 252.0, "rate": 1479.0, "krw": 372708, "item": "Parts", "importDate": "2025-12-11", "importNo": "1219925801471M", "tariff": 29879.0, "vat": 37658.0, "customsFee": 271.0, "transport": "진로직스", "shipFee": 4477.0, "subtotal": 67808.0, "total": 444993.0, "qty": 1, "unit": 444993, "month": "2025-12", "contractStart": "-", "contractEnd": "-"}, {"no": 6, "po": "GPO460", "vendor": "GDC", "payType": "Net 30 days", "type": "장비", "poDate": "2025-12-16", "remitDate": "2026-01-21", "usd": 2710.0, "rate": 1475.7, "krw": 3999147, "item": "SR-1000", "importDate": "2026-01-01", "importNo": "2317626006259M", "tariff": 0, "vat": 399770.0, "customsFee": 0, "transport": "Fedex", "shipFee": 0, "subtotal": 399770.0, "total": 4398917.0, "qty": 1, "unit": 4398917, "month": "2026-01", "contractStart": "-", "contractEnd": "-"}, {"no": 7, "po": "LPO001", "vendor": "Lemon", "payType": "TT Advance", "type": "장비", "poDate": "2025-12-16", "remitDate": "2026-01-30", "usd": 5056.8, "rate": 1445.5, "krw": 7309604, "item": "ICP+TPC (6EA)", "importDate": "2026-03-09", "importNo": "1421426100183M", "tariff": 240450.0, "vat": 831820.0, "customsFee": 36000.0, "transport": "진로직스", "shipFee": 581438.0, "subtotal": 1108270.0, "total": 8999312.0, "qty": 6, "unit": 1499885, "month": "2026-03", "contractStart": "-", "contractEnd": "-"}, {"no": 8, "po": "CPO678-2", "vendor": "Christie", "payType": "Net 45 days", "type": "장비", "poDate": "2025-12-18", "remitDate": "2026-03-06", "usd": 137850.0, "rate": 1477.6, "krw": 203687160, "item": "CP4425-RGB Projector (3EA)", "importDate": "2026-01-08", "importNo": "1400826101004M", "tariff": 0, "vat": 19976300.0, "customsFee": 263400.0, "transport": "진로직스", "shipFee": 2385057.0, "subtotal": 20239700.0, "total": 226311917.0, "qty": 3, "unit": 75437306, "month": "2026-01", "contractStart": "-", "contractEnd": "-"}, {"no": 9, "po": "CPO682", "vendor": "Christie", "payType": "Net 45 days", "type": "장비", "poDate": "2025-12-19", "remitDate": "2026-02-04", "usd": 20174.0, "rate": 1454.7, "krw": 29347118, "item": "Projector/Parts", "importDate": "2025-12-24", "importNo": "1400825101450M", "tariff": 0, "vat": 3156262.0, "customsFee": 92978.0, "transport": "진로직스", "shipFee": 1864148.0, "subtotal": 3249240.0, "total": 34460506.0, "qty": 1, "unit": 34460506, "month": "2025-12", "contractStart": "-", "contractEnd": "-"}, {"no": 10, "po": "CPO683", "vendor": "Christie", "payType": "Net 45 days", "type": "장비", "poDate": "2025-12-19", "remitDate": "2026-02-04", "usd": 4620.0, "rate": 1454.7, "krw": 6720714, "item": "Lens", "importDate": "2025-12-24", "importNo": "1400825101450M", "tariff": 84170.0, "vat": 722808.0, "customsFee": 14422.0, "transport": "진로직스", "shipFee": 426904.0, "subtotal": 821400.0, "total": 7969018.0, "qty": 1, "unit": 7969018, "month": "2025-12", "contractStart": "-", "contractEnd": "-"}, {"no": 11, "po": "MPO66", "vendor": "MAG", "payType": "T/T", "type": "장비", "poDate": "2025-12-20", "remitDate": "2026-01-21", "usd": 9626.35, "rate": 1476.0, "krw": 14208493, "item": "DCO-16000/L-SUB (13EA)", "importDate": "2026-02-19", "importNo": "1421426100153M", "tariff": 0, "vat": 1704871.0, "customsFee": 93591.0, "transport": "진로직스", "shipFee": 2690702.0, "subtotal": 1798462.0, "total": 18697657.0, "qty": 13, "unit": 1438281, "month": "2026-02", "contractStart": "-", "contractEnd": "-"}, {"no": 12, "po": "MPO65", "vendor": "MAG", "payType": "T/T", "type": "장비", "poDate": "2025-12-20", "remitDate": "2025-12-16", "usd": 4936.0, "rate": 1480.0, "krw": 7305280, "item": "Audio Amp", "importDate": "2026-02-19", "importNo": "1421426100153M", "tariff": 0, "vat": 874189.0, "customsFee": 47990.0, "transport": "진로직스", "shipFee": 1379682.0, "subtotal": 922179.0, "total": 9607141.0, "qty": 1, "unit": 9607141, "month": "2026-02", "contractStart": "-", "contractEnd": "-"}, {"no": 13, "po": "CPO689", "vendor": "Christie", "payType": "Net 45 days", "type": "부품", "poDate": "2026-01-03", "remitDate": "2026-02-19", "usd": 2745.0, "rate": 1451.7, "krw": 3984916, "item": "Parts", "importDate": "2026-01-20", "importNo": "2317626055855M", "tariff": 20430.0, "vat": 409790.0, "customsFee": 0, "transport": "Fedex", "shipFee": 162080.0, "subtotal": 430220.0, "total": 4577216.0, "qty": 1, "unit": 4577216, "month": "2026-01", "contractStart": "-", "contractEnd": "-"}, {"no": 14, "po": "GPO467", "vendor": "GDC", "payType": "Net 30 days", "type": "장비", "poDate": "2026-01-07", "remitDate": "2026-04-01", "usd": 1700.0, "rate": 1506.4, "krw": 2560880, "item": "IMB Parts", "importDate": "2026-02-03", "importNo": "2317626105219M", "tariff": 0, "vat": 250080.0, "customsFee": 0, "transport": "Fedex", "shipFee": 136050.0, "subtotal": 250080.0, "total": 2947010.0, "qty": 20, "unit": 147350, "month": "2026-02", "contractStart": "-", "contractEnd": "-"}, {"no": 15, "po": "CPO692-1", "vendor": "Christie", "payType": "Net 45 days", "type": "부품(렌즈)", "poDate": "2026-01-13", "remitDate": "-", "usd": 11000.0, "rate": 0, "krw": 0, "item": "Lens (2EA)", "importDate": "2026-02-11", "importNo": "2235626138790M", "tariff": 1297810.0, "vat": 1752040.0, "customsFee": 0, "transport": "DHL", "shipFee": 1553086.0, "subtotal": 3049850.0, "total": 4602936.0, "qty": 2, "unit": 2301468, "month": "2026-02", "contractStart": "-", "contractEnd": "-"}, {"no": 16, "po": "CPO692-2", "vendor": "Christie", "payType": "Net 45 days", "type": "장비", "poDate": "2026-01-13", "remitDate": "-", "usd": 286580.0, "rate": 0, "krw": 0, "item": "Projector+Lens+ASSY (28EA)", "importDate": "2026-02-20", "importNo": "1400826101051M", "tariff": 3450410.0, "vat": 42329590.0, "customsFee": 250000.0, "transport": "진로직스", "shipFee": 2649525.0, "subtotal": 46030000.0, "total": 48679525.0, "qty": 28, "unit": 1738554, "month": "2026-02", "contractStart": "-", "contractEnd": "-"}, {"no": 17, "po": "CPO690", "vendor": "Christie", "payType": "Net 45 days", "type": "부품", "poDate": "2026-01-28", "remitDate": "2026-04-01", "usd": 9740.0, "rate": 1505.7, "krw": 14665518, "item": "ASSY Liquid Cooling (20EA)", "importDate": "2026-01-31", "importNo": "2235626096487M", "tariff": 0, "vat": 1493440.0, "customsFee": 0, "transport": "DHL", "shipFee": 1561040.0, "subtotal": 1493440.0, "total": 17719998.0, "qty": 20, "unit": 886000, "month": "2026-01", "contractStart": "-", "contractEnd": "-"}, {"no": 18, "po": "CPO693", "vendor": "Christie", "payType": "Net 45 days", "type": "장비", "poDate": "2026-02-18", "remitDate": "-", "usd": 35674.0, "rate": 0, "krw": 0, "item": "Projector (한국)", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 0, "qty": 1, "unit": 0, "month": "2026-02", "contractStart": "-", "contractEnd": "-"}, {"no": 19, "po": "GPO468-1", "vendor": "GDC", "payType": "Net 30 days", "type": "장비", "poDate": "2026-02-27", "remitDate": "-", "usd": 36190.0, "rate": 0, "krw": 0, "item": "SR-1000 IMB (10EA)", "importDate": "2026-03-14", "importNo": "1400826101085M", "tariff": 0, "vat": 5395574.0, "customsFee": 137864.0, "transport": "진로직스", "shipFee": 1232133.0, "subtotal": 5533438.0, "total": 6765571.0, "qty": 10, "unit": 676557, "month": "2026-03", "contractStart": "-", "contractEnd": "-"}, {"no": 20, "po": "GPO472", "vendor": "GDC", "payType": "Net 30 days", "type": "부품", "poDate": "2026-03-07", "remitDate": "-", "usd": 180.0, "rate": 0, "krw": 0, "item": "TMS Parts", "importDate": "2026-03-14", "importNo": "1400826101085M", "tariff": 0, "vat": 26836.0, "customsFee": 536.0, "transport": "진로직스", "shipFee": 6128.0, "subtotal": 27372.0, "total": 33500.0, "qty": 1, "unit": 33500, "month": "2026-03", "contractStart": "-", "contractEnd": "-"}, {"no": 21, "po": "GPO468-2", "vendor": "GDC", "payType": "Net 30 days", "type": "장비", "poDate": "2026-03-07", "remitDate": "-", "usd": 21280.0, "rate": 0, "krw": 0, "item": "IMB", "importDate": "2026-03-23", "importNo": "2317626258975M", "tariff": 0, "vat": 4747530.0, "customsFee": 0, "transport": "Fedex", "shipFee": 904960.0, "subtotal": 4747530.0, "total": 5652490.0, "qty": 4, "unit": 1413122, "month": "2026-03", "contractStart": "-", "contractEnd": "-"}, {"no": 22, "po": "CPO695-1", "vendor": "Christie", "payType": "Net 45 days", "type": "부품(Fan)", "poDate": "2026-03-17", "remitDate": "-", "usd": 2058.0, "rate": 0, "krw": 0, "item": "Fan (7EA)", "importDate": "2026-03-24", "importNo": "2235626283517M", "tariff": 0, "vat": 350480.0, "customsFee": 0, "transport": "DHL", "shipFee": 6264783.0, "subtotal": 350480.0, "total": 6615263.0, "qty": 7, "unit": 945038, "month": "2026-03", "contractStart": "-", "contractEnd": "-"}, {"no": 23, "po": "CPO695-2", "vendor": "Christie", "payType": "Net 45 days", "type": "부품(Filter)", "poDate": "2026-03-17", "remitDate": "-", "usd": 1977.0, "rate": 0, "krw": 0, "item": "Filter+Fan (15EA)", "importDate": "2026-03-23", "importNo": "2235626277307M", "tariff": 50790.0, "vat": 317310.0, "customsFee": 0, "transport": "DHL", "shipFee": 1454605.0, "subtotal": 368100.0, "total": 1822705.0, "qty": 15, "unit": 121514, "month": "2026-03", "contractStart": "-", "contractEnd": "-"}];
+const licData = [{"no": 24, "po": "CPO667", "vendor": "Christie", "payType": "Net 45 days", "type": "워런티(EW)", "poDate": "2025-09-25", "remitDate": "2026-02-27", "usd": 5673.0, "rate": 1441.6, "krw": 8178197, "item": "EW CP2220", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 8178197, "qty": 1, "unit": 8178197, "month": "2025-09", "contractStart": "2025-09-13", "contractEnd": "2026-08-28"}, {"no": 25, "po": "GPO458", "vendor": "GDC", "payType": "Net 30 days", "type": "라이센스", "poDate": "2025-11-21", "remitDate": "2025-12-29", "usd": 350.0, "rate": 1439.1, "krw": 503685, "item": "HFR License", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 503685, "qty": 1, "unit": 503685, "month": "2025-12", "contractStart": "2025-12-01", "contractEnd": "2026-11-30"}, {"no": 26, "po": "CPO681", "vendor": "Christie", "payType": "Net 45 days", "type": "워런티(EW)", "poDate": "2025-12-02", "remitDate": "2026-02-11", "usd": 26358.0, "rate": 1460.7, "krw": 38501131, "item": "EW CP2309/2315/2320-RGB", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 38501131, "qty": 1, "unit": 38501131, "month": "2025-12", "contractStart": "2025-12-22", "contractEnd": "2026-12-21"}, {"no": 27, "po": "GPO459", "vendor": "GDC", "payType": "Net 30 days", "type": "워런티(EW)", "poDate": "2025-12-16", "remitDate": "2026-01-21", "usd": 450.0, "rate": 1475.7, "krw": 664065, "item": "TMS-2000 EW", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 664065, "qty": 1, "unit": 664065, "month": "2026-01", "contractStart": "2026-01-01", "contractEnd": "2026-12-31"}, {"no": 28, "po": "GPO461", "vendor": "GDC", "payType": "Net 30 days", "type": "워런티(EW)", "poDate": "2025-12-16", "remitDate": "2026-01-21", "usd": 540.0, "rate": 1475.7, "krw": 796878, "item": "TMS-1000 EW", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 796878, "qty": 1, "unit": 796878, "month": "2025-11", "contractStart": "2025-11-01", "contractEnd": "2026-10-30"}, {"no": 29, "po": "CPO685", "vendor": "Christie", "payType": "Net 45 days", "type": "워런티(EW)", "poDate": "2025-12-19", "remitDate": "2026-02-27", "usd": 136516.0, "rate": 1441.6, "krw": 196801466, "item": "EW 대량 (CP2208~CP4450)", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 196801466, "qty": 1, "unit": 196801466, "month": "2026-01", "contractStart": "2026-01-01", "contractEnd": "2026-12-31"}, {"no": 30, "po": "GPO465", "vendor": "GDC", "payType": "Net 30 days", "type": "워런티(EW)", "poDate": "2025-12-24", "remitDate": "-", "usd": 76054.0, "rate": 0, "krw": 0, "item": "EW 대량 (SR/SX/TMS)", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 0, "qty": 1, "unit": 0, "month": "2026-01", "contractStart": "2026-01-01", "contractEnd": "2026-12-31"}, {"no": 31, "po": "CPO686", "vendor": "Christie", "payType": "Net 45 days", "type": "워런티(EW)", "poDate": "2026-01-07", "remitDate": "2026-02-19", "usd": 14793.0, "rate": 1451.7, "krw": 21474998, "item": "EW CP2315/CP4440-RGB", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 21474998, "qty": 1, "unit": 21474998, "month": "2026-01", "contractStart": "2026-01-30", "contractEnd": "2027-01-29"}, {"no": 32, "po": "CPO687", "vendor": "Christie", "payType": "Net 45 days", "type": "워런티(EW)", "poDate": "2026-01-07", "remitDate": "-", "usd": 26656.0, "rate": 0, "krw": 0, "item": "EW (홀딩)", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 0, "qty": 1, "unit": 0, "month": "2026-01", "contractStart": "-", "contractEnd": "-"}, {"no": 33, "po": "GPO462", "vendor": "GDC", "payType": "Net 30 days", "type": "라이센스", "poDate": "2026-01-20", "remitDate": "2026-02-04", "usd": 1440.0, "rate": 1453.6, "krw": 2093184, "item": "TMS-2000 License", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 2093184, "qty": 1, "unit": 2093184, "month": "2026-01", "contractStart": "2026-01-01", "contractEnd": "2026-12-31"}, {"no": 34, "po": "GPO463", "vendor": "GDC", "payType": "Net 30 days", "type": "워런티(EW)", "poDate": "2026-01-20", "remitDate": "2026-02-04", "usd": 4489.0, "rate": 1453.6, "krw": 6525210, "item": "SX/SR EW (CGV/Lotte)", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 6525210, "qty": 1, "unit": 6525210, "month": "2026-01", "contractStart": "2026-01-01", "contractEnd": "2026-12-31"}, {"no": 35, "po": "GPO464", "vendor": "GDC", "payType": "Net 30 days", "type": "워런티(EW)", "poDate": "2026-01-20", "remitDate": "2026-02-04", "usd": 5670.57, "rate": 1453.6, "krw": 8242741, "item": "SR-1000/SX-3000 EW", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 8242741, "qty": 1, "unit": 8242741, "month": "2026-01", "contractStart": "2026-01-01", "contractEnd": "2026-12-31"}, {"no": 36, "po": "CPO691", "vendor": "Christie", "payType": "Net 45 days", "type": "워런티(EW)", "poDate": "2026-02-04", "remitDate": "2026-04-01", "usd": 24614.0, "rate": 1505.7, "krw": 37061300, "item": "EW (메가박스 외)", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 37061300, "qty": 1, "unit": 37061300, "month": "2026-03", "contractStart": "2026-03-01", "contractEnd": "2027-02-28"}, {"no": 37, "po": "GPO469", "vendor": "GDC", "payType": "Net 30 days", "type": "워런티(EW)", "poDate": "2026-02-07", "remitDate": "2026-04-01", "usd": 3993.05, "rate": 1506.4, "krw": 6015131, "item": "SR/SX EW (하남미사 외)", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 6015131, "qty": 1, "unit": 6015131, "month": "2026-01", "contractStart": "2026-01-01", "contractEnd": "2027-02-22"}, {"no": 38, "po": "GPO470", "vendor": "GDC", "payType": "Net 30 days", "type": "라이센스", "poDate": "2026-02-27", "remitDate": "2026-04-01", "usd": 360.0, "rate": 1506.4, "krw": 542304, "item": "TMS-1000 License", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 542304, "qty": 1, "unit": 542304, "month": "2026-03", "contractStart": "2026-03-01", "contractEnd": "2027-02-28"}, {"no": 39, "po": "GPO471", "vendor": "GDC", "payType": "Net 30 days", "type": "라이센스", "poDate": "2026-03-07", "remitDate": "2026-04-01", "usd": 500.0, "rate": 1506.4, "krw": 753200, "item": "Dolby Atmos License", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 753200, "qty": 1, "unit": 753200, "month": "2026-03", "contractStart": "-", "contractEnd": "-"}, {"no": 40, "po": "CPO694", "vendor": "Christie", "payType": "Net 45 days", "type": "워런티(EW)", "poDate": "2026-03-28", "remitDate": "-", "usd": 17404.0, "rate": 0, "krw": 0, "item": "EW (CGV 동백 외)", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 0, "qty": 1, "unit": 0, "month": "2026-04", "contractStart": "2026-04-01", "contractEnd": "2027-03-31"}, {"no": 41, "po": "CPO688", "vendor": "Christie", "payType": "Net 45 days", "type": "Inspection", "poDate": "2026-01-15", "remitDate": "-", "usd": 4180.0, "rate": 0, "krw": 0, "item": "Inspection fee", "importDate": "-", "importNo": "-", "tariff": 0, "vat": 0, "customsFee": 0, "transport": "-", "shipFee": 0, "subtotal": 0, "total": 0, "qty": 1, "unit": 0, "month": "2026-01", "contractStart": "-", "contractEnd": "-"}];
+const remitData = [{"no": 1, "date": "2025.12.01", "recipient": "Christie", "poRef": "CPO668-3, CPO673", "usd": 35563.0, "rate": 0, "totalKrw": 0}, {"no": 2, "date": "2025.12.02", "recipient": "GDC", "poRef": "GPO-445, 446-1, 447, 448", "usd": 55830.0, "rate": 0, "totalKrw": 0}, {"no": 3, "date": "2025.12.02", "recipient": "Thali Consulting", "poRef": "(PO미기재)", "usd": 9247.69, "rate": 0, "totalKrw": 0}, {"no": 4, "date": "2025.12.02", "recipient": "Christie", "poRef": "CPO-669", "usd": 7410.0, "rate": 0, "totalKrw": 0}, {"no": 5, "date": "2025.12.09", "recipient": "Christie", "poRef": "CPO675,677,CPO-664-2", "usd": 6024.0, "rate": 1473.3, "totalKrw": 8922625.0}, {"no": 6, "date": "2025.12.09", "recipient": "GDC", "poRef": "GPO449,450,452,453,454", "usd": 7862.0, "rate": 1473.2, "totalKrw": 11629762.0}, {"no": 7, "date": "2025.12.16", "recipient": "MAG", "poRef": "MPO-65,64", "usd": 15040.0, "rate": 1480.0, "totalKrw": 22306800.0}, {"no": 8, "date": "2025.12.16", "recipient": "Christie", "poRef": "CPO-679,CPO-678-1", "usd": 143557.0, "rate": 1479.7, "totalKrw": 212471386.0}, {"no": 9, "date": "2025.12.19", "recipient": "GDC(라이센스)", "poRef": "/ROC/라이센스", "usd": 1200.0, "rate": 1464.9, "totalKrw": 0}, {"no": 10, "date": "2025.12.29", "recipient": "GDC", "poRef": "GPO451,458,455,456,457", "usd": 13860.0, "rate": 1439.1, "totalKrw": 18264679.0}, {"no": 11, "date": "2025.12.30", "recipient": "Christie", "poRef": "CPO676", "usd": 36060.0, "rate": 1442.7, "totalKrw": 52073116.0}, {"no": 12, "date": "2026.01.13", "recipient": "Christie", "poRef": "CPO680", "usd": 252.0, "rate": 1479.0, "totalKrw": 412788.0}, {"no": 13, "date": "2026.01.21", "recipient": "GDC", "poRef": "GPO459,460,461", "usd": 3700.0, "rate": 1475.7, "totalKrw": 5505104.0}, {"no": 14, "date": "2026.01.21", "recipient": "MAG", "poRef": "MPO-66", "usd": 9626.35, "rate": 1476.0, "totalKrw": 14256012.0}, {"no": 15, "date": "2026.01.30", "recipient": "Lemon", "poRef": "LPO-001", "usd": 5056.8, "rate": 1445.5, "totalKrw": 7356514.0}, {"no": 16, "date": "2026.01.30", "recipient": "Monoplex", "poRef": "MONOPLEX20260126-01", "usd": 25976.0, "rate": 1445.5, "totalKrw": 37597718.0}, {"no": 17, "date": "2026.02.04", "recipient": "Christie", "poRef": "CPO-682,683", "usd": 24794.0, "rate": 1454.7, "totalKrw": 36117425.0}, {"no": 18, "date": "2026.02.04", "recipient": "GDC", "poRef": "GPO462,463,464", "usd": 11599.57, "rate": 1453.6, "totalKrw": 16908206.0}, {"no": 19, "date": "2026.02.11", "recipient": "Christie", "poRef": "CPO681", "usd": 26358.0, "rate": 1460.7, "totalKrw": 38550844.0}, {"no": 20, "date": "2026.02.19", "recipient": "Christie", "poRef": "CPO686,CPO689", "usd": 17538.0, "rate": 1451.7, "totalKrw": 25506948.0}, {"no": 21, "date": "2026.02.27", "recipient": "Christie", "poRef": "CPO685,667", "usd": 142189.0, "rate": 1441.6, "totalKrw": 205028994.0}, {"no": 22, "date": "2026.03.06", "recipient": "Christie", "poRef": "CPO678-2", "usd": 137850.0, "rate": 1477.6, "totalKrw": 203737212.0}, {"no": 23, "date": "2026.04.01", "recipient": "Christie", "poRef": "CPO690,691", "usd": 34354.0, "rate": 1505.7, "totalKrw": 51777431.0}, {"no": 24, "date": "2026.04.01", "recipient": "GDC", "poRef": "GPO469,467,470,471", "usd": 6553.05, "rate": 1506.4, "totalKrw": 9919642.0}, {"no": 25, "date": "2026.04.01", "recipient": "GDC(베트남)", "poRef": "SORGD-001 Vietnam", "usd": 22509.68, "rate": 1494.4, "totalKrw": 0}];
+const lcData = [{"no": "기준일: 2026-04-10  |  미상환 건만 표시  |  상환예정일 = 신한은행 PDF 만기일 기준", "po": "", "vendor": "", "item": "", "usd": 0, "openDate": "", "dueDate": "", "status": ""}, {"no": "< 은행별 Usance L/C 한도 현황 >", "po": "", "vendor": "", "item": "", "usd": 0, "openDate": "", "dueDate": "", "status": ""}, {"no": "은행", "po": "총 한도(USD)", "vendor": "현재 오픈(USD)", "item": "잔여 가용 한도(USD)", "usd": 0, "openDate": "비고", "dueDate": "", "status": ""}, {"no": "신한은행", "po": "500000", "vendor": "", "item": "", "usd": 0, "openDate": "LC 현재 활성 사용 중", "dueDate": "", "status": ""}, {"no": "하나은행", "po": "200000", "vendor": "", "item": "", "usd": 0, "openDate": "현재 미사용", "dueDate": "", "status": ""}, {"no": "우리은행", "po": "700000", "vendor": "", "item": "", "usd": 0, "openDate": "신한·하나만 활성 (Slack 2026-03-16)", "dueDate": "", "status": ""}, {"no": "합계", "po": "", "vendor": "", "item": "", "usd": 0, "openDate": "", "dueDate": "", "status": ""}, {"no": "※ 현재 오픈 = 미상환 L/C(상환확정일 비어있는 건)의 개설금액 합계 → 상환 시 자동 반영", "po": "", "vendor": "", "item": "", "usd": 0, "openDate": "", "dueDate": "", "status": ""}, {"no": "출처: 총 한도 – Slack 2024-11-19 / 활성 여부 – Slack 2026-03-16 도원석", "po": "", "vendor": "", "item": "", "usd": 0, "openDate": "", "dueDate": "", "status": ""}, {"no": "< 미상환 L/C 현황 >", "po": "", "vendor": "", "item": "", "usd": 0, "openDate": "", "dueDate": "", "status": ""}, {"no": "No.", "po": "PO No.", "vendor": "업체", "item": "개설금액(USD)", "usd": 0, "openDate": "L/C No.", "dueDate": "L/C Open Date", "status": "L/C Expired Date"}, {"no": 1, "po": "CPO-672", "vendor": "Christie", "item": "221868", "usd": 0, "openDate": "M88JX2510NU00018", "dueDate": "2025-10-16", "status": "2026-04-14"}, {"no": 2, "po": "GPO-446-2", "vendor": "GDC", "item": "190470", "usd": 0, "openDate": "M88JX2511NU00018", "dueDate": "2025-11-11", "status": "2026-05-10"}, {"no": "합계", "po": "", "vendor": "", "item": "", "usd": 0, "openDate": "", "dueDate": "", "status": ""}, {"no": "< 수입/통관 정보 >", "po": "", "vendor": "", "item": "", "usd": 0, "openDate": "", "dueDate": "", "status": ""}, {"no": "PO No.", "po": "수입신고번호", "vendor": "수입신고 수리일자", "item": "수입신고환율(₩)", "usd": 0, "openDate": "부가세(KRW)", "dueDate": "관부가세 지급일", "status": "관세사"}, {"no": "CPO-672", "po": "1421425100608M", "vendor": "2025-10-30", "item": "1433", "usd": 83050.0, "openDate": "31860000", "dueDate": "", "status": "아인관세사"}, {"no": "GPO-446-2", "po": "1421425100667M", "vendor": "2025-11-19", "item": "1465.2", "usd": 0, "openDate": "28259850", "dueDate": "2025-12-04", "status": "아인관세사"}];
+const fxData = [{"start": "2025-10-05", "end": "2025-10-11", "currency": "USD", "rate": 1405.75}, {"start": "2025-10-12", "end": "2025-10-18", "currency": "USD", "rate": 1401.9}, {"start": "2025-10-19", "end": "2025-10-25", "currency": "USD", "rate": 1424.02}, {"start": "2025-10-26", "end": "2025-11-01", "currency": "USD", "rate": 1426.02}, {"start": "2025-11-02", "end": "2025-11-08", "currency": "USD", "rate": 1431.82}, {"start": "2025-11-09", "end": "2025-11-15", "currency": "USD", "rate": 1437.34}, {"start": "2025-11-16", "end": "2025-11-22", "currency": "USD", "rate": 1461.36}, {"start": "2025-11-23", "end": "2025-11-29", "currency": "USD", "rate": 1463.08}, {"start": "2025-11-30", "end": "2025-12-06", "currency": "USD", "rate": 1469.3}, {"start": "2025-12-07", "end": "2025-12-13", "currency": "USD", "rate": 1468.96}, {"start": "2025-12-14", "end": "2025-12-20", "currency": "USD", "rate": 1470.28}, {"start": "2025-12-21", "end": "2025-12-27", "currency": "USD", "rate": 1474.96}, {"start": "2025-12-28", "end": "2026-01-03", "currency": "USD", "rate": 1475.18}, {"start": "2026-01-04", "end": "2026-01-10", "currency": "USD", "rate": 1436.5}, {"start": "2026-01-11", "end": "2026-01-17", "currency": "USD", "rate": 1446.46}, {"start": "2026-01-18", "end": "2026-01-24", "currency": "USD", "rate": 1467.96}, {"start": "2026-01-25", "end": "2026-01-31", "currency": "USD", "rate": 1473.06}, {"start": "2026-02-01", "end": "2026-02-07", "currency": "USD", "rate": 1442.88}, {"start": "2026-02-08", "end": "2026-02-14", "currency": "USD", "rate": 1451.66}, {"start": "2026-02-15", "end": "2026-02-21", "currency": "USD", "rate": 1458.02}, {"start": "2026-02-22", "end": "2026-02-28", "currency": "USD", "rate": 1446.9}, {"start": "2026-03-01", "end": "2026-03-07", "currency": "USD", "rate": 1439.26}, {"start": "2026-03-08", "end": "2026-03-14", "currency": "USD", "rate": 1460.75}, {"start": "2026-03-15", "end": "2026-03-21", "currency": "USD", "rate": 1477.5}, {"start": "2026-03-22", "end": "2026-03-28", "currency": "USD", "rate": 1492.56}, {"start": "2026-03-29", "end": "2026-04-04", "currency": "USD", "rate": 1500.92}, {"start": "2026-04-05", "end": "2026-04-11", "currency": "USD", "rate": 1515.72}];
 
-const licData = [
-  {no:24,po:"CPO667",vendor:"Christie",type:"워런티(EW)",usd:5673,item:"EW CP2220",remit:"2026-02-27",total:8180165,start:"2025-09-13",end:"2026-08-28",month:"2025-09"},
-  {no:25,po:"GPO458",vendor:"GDC",type:"라이센스",usd:350,item:"HFR License",remit:"2025-12-29",total:504867,start:"2025-12-01",end:"2026-11-30",month:"2025-12"},
-  {no:26,po:"CPO681",vendor:"Christie",type:"워런티(EW)",usd:26358,item:"EW CP2309/2315/2320-RGB",remit:"2026-02-11",total:38550845,start:"2025-12-22",end:"2026-12-21",month:"2025-12"},
-  {no:27,po:"GPO459",vendor:"GDC",type:"워런티(EW)",usd:450,item:"TMS-2000 EW",remit:"2026-01-21",total:669540,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
-  {no:28,po:"GPO461",vendor:"GDC",type:"워런티(EW)",usd:540,item:"TMS-1000 EW",remit:"2026-01-21",total:803448,start:"2025-11-01",end:"2026-10-30",month:"2025-11"},
-  {no:29,po:"CPO685",vendor:"Christie",type:"워런티(EW)",usd:136516,item:"EW 대량 (CP2208~CP4450)",remit:"2026-02-27",total:196848830,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
-  {no:30,po:"GPO465",vendor:"GDC",type:"워런티(EW)",usd:76054,item:"EW 대량 (SR/SX/TMS)",remit:"-",total:0,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
-  {no:31,po:"CPO686",vendor:"Christie",type:"워런티(EW)",usd:14793,item:"EW CP2315/CP4440-RGB",remit:"2026-02-19",total:21514671,start:"2026-01-30",end:"2027-01-29",month:"2026-01"},
-  {no:32,po:"CPO687",vendor:"Christie",type:"워런티(EW)",usd:26656,item:"EW (홀딩)",remit:"-",total:0,start:"미확인",end:"미확인",month:"2026-01"},
-  {no:33,po:"GPO462",vendor:"GDC",type:"라이센스",usd:1440,item:"TMS-2000 License",remit:"2026-02-04",total:2099027,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
-  {no:34,po:"GPO463",vendor:"GDC",type:"워런티(EW)",usd:4489,item:"SX/SR EW (CGV/Lotte)",remit:"2026-02-04",total:6543427,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
-  {no:35,po:"GPO464",vendor:"GDC",type:"워런티(EW)",usd:5670.57,item:"SR-1000/SX-3000 EW",remit:"2026-02-04",total:8265753,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
-  {no:36,po:"CPO691",vendor:"Christie",type:"워런티(EW)",usd:24614,item:"EW (메가박스 외)",remit:"2026-04-01",total:37097564,start:"2026-03-01",end:"미확인",month:"2026-03"},
-  {no:37,po:"GPO469",vendor:"GDC",type:"워런티(EW)",usd:3993.05,item:"SR/SX EW (하남미사 외)",remit:"2026-04-01",total:6044457,start:"2026-01-01",end:"2027-02-22",month:"2026-01"},
-  {no:38,po:"GPO470",vendor:"GDC",type:"라이센스",usd:360,item:"TMS-1000 License",remit:"2026-04-01",total:544947,start:"2026-03-01",end:"2027-02-28",month:"2026-03"},
-  {no:39,po:"GPO471",vendor:"GDC",type:"라이센스",usd:500,item:"Dolby Atmos License",remit:"2026-04-01",total:756872,start:"미확인",end:"2027-02-28",month:"2026-03"},
-  {no:40,po:"CPO694",vendor:"Christie",type:"워런티(EW)",usd:17404,item:"EW (CGV 동백 외)",remit:"-",total:0,start:"2026-04-01",end:"2027-03-31",month:"2026-04"},
-  {no:41,po:"CPO688",vendor:"Christie",type:"Inspection",usd:4180,item:"Inspection fee",remit:"-",total:0,start:"-",end:"-",month:"2026-01"},
-];
+const fmt = n => Math.round(n).toLocaleString('ko-KR');
+const fmtUSD = n => '$' + Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 
-const remitData = [
-  {no:1,date:"2025-12-01",to:"Christie",ref:"CPO668-3, CPO673",usd:35563,rate:0,fee:0,wire:0,krw:0},
-  {no:2,date:"2025-12-02",to:"GDC",ref:"GPO-445~448",usd:55830,rate:0,fee:0,wire:0,krw:0},
-  {no:3,date:"2025-12-02",to:"Thali Consulting",ref:"(PO미기재)",usd:9247.69,rate:0,fee:0,wire:0,krw:0},
-  {no:4,date:"2025-12-02",to:"Christie",ref:"CPO-669",usd:7410,rate:0,fee:0,wire:0,krw:0},
-  {no:5,date:"2025-12-09",to:"Christie",ref:"CPO675,677,664-2",usd:6024,rate:1473.3,fee:10000,wire:8000,krw:8922625},
-  {no:6,date:"2025-12-09",to:"GDC",ref:"GPO449~454",usd:7862,rate:1473.2,fee:10000,wire:8000,krw:11629762},
-  {no:7,date:"2025-12-16",to:"MAG",ref:"MPO-65,64",usd:15040,rate:1480,fee:10000,wire:8000,krw:22306800},
-  {no:8,date:"2025-12-16",to:"Christie",ref:"CPO-679,678-1",usd:143557,rate:1479.7,fee:12500,wire:8000,krw:212471386},
-  {no:9,date:"2025-12-19",to:"GDC(라이센스)",ref:"라이센스",usd:1200,rate:1464.9,fee:0,wire:0,krw:0},
-  {no:10,date:"2025-12-29",to:"GDC",ref:"GPO451,458,455~457",usd:13860,rate:1439.1,fee:10000,wire:8000,krw:18264679},
-  {no:11,date:"2025-12-30",to:"Christie",ref:"CPO676",usd:36060,rate:1442.7,fee:12500,wire:8000,krw:52073116},
-  {no:12,date:"2026-01-13",to:"Christie",ref:"CPO680",usd:252,rate:1479,fee:2500,wire:8000,krw:412788},
-  {no:13,date:"2026-01-21",to:"GDC",ref:"GPO459,460,461",usd:3700,rate:1475.7,fee:7500,wire:8000,krw:5505104},
-  {no:14,date:"2026-01-21",to:"MAG",ref:"MPO-66",usd:9626.35,rate:1476,fee:10000,wire:8000,krw:14256012},
-  {no:15,date:"2026-01-30",to:"Lemon",ref:"LPO-001",usd:5056.8,rate:1445.5,fee:10000,wire:8000,krw:7356514},
-  {no:16,date:"2026-01-30",to:"Monoplex",ref:"MONOPLEX-01",usd:25976,rate:1445.5,fee:12500,wire:8000,krw:37597718},
-  {no:17,date:"2026-02-04",to:"Christie",ref:"CPO-682,683",usd:24794,rate:1454.7,fee:12500,wire:8000,krw:36117425},
-  {no:18,date:"2026-02-04",to:"GDC",ref:"GPO462,463,464",usd:11599.57,rate:1453.6,fee:10000,wire:8000,krw:16908206},
-  {no:19,date:"2026-02-11",to:"Christie",ref:"CPO681",usd:26358,rate:1460.7,fee:12500,wire:8000,krw:38550844},
-  {no:20,date:"2026-02-19",to:"Christie",ref:"CPO686,689",usd:17538,rate:1451.7,fee:10000,wire:8000,krw:25506948},
-  {no:21,date:"2026-02-27",to:"Christie",ref:"CPO685,667",usd:142189,rate:1441.6,fee:12500,wire:8000,krw:205028994},
-  {no:22,date:"2026-03-06",to:"Christie",ref:"CPO678-2",usd:137850,rate:1477.6,fee:12500,wire:8000,krw:203737212},
-  {no:23,date:"2026-04-01",to:"Christie",ref:"CPO690,691",usd:34354,rate:1505.7,fee:12500,wire:8000,krw:51777431},
-  {no:24,date:"2026-04-01",to:"GDC",ref:"GPO469,467,470,471",usd:6553.05,rate:1506.4,fee:10000,wire:8000,krw:9919642},
-  {no:25,date:"2026-04-01",to:"GDC(베트남)",ref:"SORGD-001 VN",usd:22509.68,rate:1494.4,fee:0,wire:0,krw:0},
-];
+const TYPE_BADGE = {
+  '장비':'badge-blue','부품':'badge-green','부품(렌즈)':'badge-green',
+  '부품(Fan)':'badge-green','부품(Filter)':'badge-green',
+  '라이센스':'badge-purple','워런티(EW)':'badge-purple','워런티':'badge-purple','EW':'badge-purple',
+  'Inspection':'badge-gray','국내출고':'badge-gray','기타':'badge-gray'
+};
 
-const lcData = [
-  {no:1,po:"CPO-672",vendor:"Christie",usd:221868,bank:"신한은행",lc:"M88JX2510NU00018",open:"2025-10-16",exp:"2026-04-14",days:"180 Days",accept:"2025-12-16",due:"2026-06-16",dDay:67},
-  {no:2,po:"GPO-446-2",vendor:"GDC",usd:190470,bank:"신한은행",lc:"M88JX2511NU00018",open:"2025-11-11",exp:"2026-05-10",days:"180 Days",accept:"2025-12-08",due:"2026-06-09",dDay:60},
-];
+function TypeBadge({type}) {
+  return <span className={`badge ${TYPE_BADGE[type]||'badge-gray'}`}>{type}</span>;
+}
 
-const lcBankData = [
-  {bank:"신한은행",limit:500000,open:412338,avail:87662,active:"활성",note:"LC 현재 활성 사용 중"},
-  {bank:"하나은행",limit:200000,open:0,avail:200000,active:"활성",note:"현재 미사용"},
-  {bank:"우리은행",limit:700000,open:0,avail:700000,active:"비활성",note:"신한·하나만 활성 (Slack 2026-03-16)"},
-];
+function Overview() {
+  const vendorMap = {};
+  [...poData,...licData].forEach(d => { vendorMap[d.vendor] = (vendorMap[d.vendor]||0) + d.total; });
+  const vendors = Object.entries(vendorMap).sort((a,b)=>b[1]-a[1]);
+  const maxV = Math.max(...vendors.map(v=>v[1]));
 
-const lcCustomsData = [
-  {po:"CPO-672",decNo:"1421425100608M",decDate:"2025-10-30",decRate:1433,tariff:83050,vat:31860000,broker:"아인관세사",brokerFee:667034,shipper:"진로직스",shipFee:2733444,overseaFee:6124.77},
-  {po:"GPO-446-2",decNo:"1421425100667M",decDate:"2025-11-19",decRate:1465.2,tariff:0,vat:28259850,broker:"아인관세사",brokerFee:595197,shipper:"진로직스",shipFee:4553880,overseaFee:5310.14},
-];
+  const monthMap = {};
+  poData.forEach(d => { const m = d.month||'미정'; monthMap[m]=(monthMap[m]||0)+d.total; });
+  const months = Object.entries(monthMap).sort((a,b)=>a[0].localeCompare(b[0]));
+  const maxM = Math.max(...months.map(v=>v[1]));
 
-const fxData = [
-  {s:"2025-10-05",e:"2025-10-11",r:1405.75},{s:"2025-10-12",e:"2025-10-18",r:1401.9},{s:"2025-10-19",e:"2025-10-25",r:1424.02},{s:"2025-10-26",e:"2025-11-01",r:1426.02},{s:"2025-11-02",e:"2025-11-08",r:1431.82},{s:"2025-11-09",e:"2025-11-15",r:1437.34},{s:"2025-11-16",e:"2025-11-22",r:1461.36},{s:"2025-11-23",e:"2025-11-29",r:1463.08},{s:"2025-11-30",e:"2025-12-06",r:1469.3},{s:"2025-12-07",e:"2025-12-13",r:1468.96},{s:"2025-12-14",e:"2025-12-20",r:1470.28},{s:"2025-12-21",e:"2025-12-27",r:1474.96},{s:"2025-12-28",e:"2026-01-03",r:1475.18},{s:"2026-01-04",e:"2026-01-10",r:1436.5},{s:"2026-01-11",e:"2026-01-17",r:1446.46},{s:"2026-01-18",e:"2026-01-24",r:1467.96},{s:"2026-01-25",e:"2026-01-31",r:1473.06},{s:"2026-02-01",e:"2026-02-07",r:1442.88},{s:"2026-02-08",e:"2026-02-14",r:1451.66},{s:"2026-02-15",e:"2026-02-21",r:1458.02},{s:"2026-02-22",e:"2026-02-28",r:1446.9},{s:"2026-03-01",e:"2026-03-07",r:1439.26},{s:"2026-03-08",e:"2026-03-14",r:1460.75},{s:"2026-03-15",e:"2026-03-21",r:1477.5},{s:"2026-03-22",e:"2026-03-28",r:1492.56},{s:"2026-03-29",e:"2026-04-04",r:1500.92},{s:"2026-04-05",e:"2026-04-11",r:1515.72},
-];
+  const fxRecent = fxData.slice(-12);
+  const rates = fxRecent.map(f=>f.rate);
+  const minR=Math.min(...rates)*0.998, maxR=Math.max(...rates)*1.002;
+  const W=400, H=80;
+  const pts = rates.map((r,i) => {
+    const x=(i/(rates.length-1||1))*W, y=H-((r-minR)/(maxR-minR||1))*H;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
 
-// ── Components ──
-function Card({label, value, sub, color}) {
-  return React.createElement('div', {style:{background:'#fff',borderRadius:10,padding:'16px 18px',borderLeft:`4px solid ${color}`,boxShadow:'0 1px 3px rgba(0,0,0,0.08)'}},
-    React.createElement('div',{style:{fontSize:12,color:'#6b7280',marginBottom:4}},label),
-    React.createElement('div',{style:{fontSize:16,fontWeight:700,color:'#111827',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}},value),
-    React.createElement('div',{style:{fontSize:11,color:'#9ca3af',marginTop:2}},sub)
+  return (
+    <div>
+      <div className="cards">
+        <div className="card"><div className="card-label">장비/부품 합계</div><div className="card-value">₩{fmt(EQ_TOTAL)}</div><div className="card-sub">{poData.length}건</div></div>
+        <div className="card purple"><div className="card-label">라이센스/워런티</div><div className="card-value">₩{fmt(LIC_TOTAL)}</div><div className="card-sub">{licData.length}건</div></div>
+        <div className="card green"><div className="card-label">총 수입원가</div><div className="card-value">₩{fmt(GRAND_TOTAL)}</div><div className="card-sub">전체 합계</div></div>
+        <div className="card red"><div className="card-label">미상환 L/C</div><div className="card-value">{fmtUSD(LC_UNPAID_USD)}</div><div className="card-sub">{lcData.filter(d=>!['상환완료','완료','paid'].includes((d.status||'').trim())).length}건</div></div>
+        <div className="card orange"><div className="card-label">최신 고시환율</div><div className="card-value">₩{LATEST_RATE.toLocaleString()}</div><div className="card-sub">{fxData.length>0?fxData[fxData.length-1].start:''}</div></div>
+      </div>
+      <div className="grid-2">
+        <div className="chart-wrap">
+          <div className="chart-title">업체별 수입원가</div>
+          {vendors.map(([name,total]) => (
+            <div key={name} style={{marginBottom:8}}>
+              <div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}>
+                <span style={{fontSize:11,color:'#475569',fontWeight:600}}>{name}</span>
+                <span style={{fontSize:11,color:'#1e293b',fontWeight:700}}>₩{fmt(total)}</span>
+              </div>
+              <div style={{background:'#f1f5f9',borderRadius:4,height:8}}>
+                <div style={{width:`${(total/maxV*100).toFixed(1)}%`,height:'100%',background:'#3b82f6',borderRadius:4}}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="chart-wrap">
+          <div className="chart-title">환율 추이 (최근 12주)</div>
+          <svg width="100%" viewBox={`0 0 ${W} ${H+20}`} style={{overflow:'visible'}}>
+            <polyline points={pts} fill="none" stroke="#3b82f6" strokeWidth="2"/>
+            {fxRecent.map((f,i) => {
+              const x=(i/(fxRecent.length-1||1))*W, y=H-((f.rate-minR)/(maxR-minR||1))*H;
+              return <circle key={i} cx={x} cy={y} r="3" fill="#3b82f6"/>;
+            })}
+            <text x="0" y={H+16} fontSize="9" fill="#94a3b8">{fxRecent[0]?.start}</text>
+            <text x={W} y={H+16} fontSize="9" fill="#94a3b8" textAnchor="end">{fxRecent[fxRecent.length-1]?.start}</text>
+          </svg>
+          <div style={{display:'flex',justifyContent:'space-between',fontSize:10,color:'#64748b',marginTop:4}}>
+            <span>최저: ₩{Math.min(...rates).toLocaleString()}</span>
+            <span>최고: ₩{Math.max(...rates).toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+      <div className="chart-wrap">
+        <div className="chart-title">귀속월별 수입원가 (장비/부품)</div>
+        <div style={{display:'flex',alignItems:'flex-end',gap:8,height:80}}>
+          {months.map(([m,t]) => (
+            <div key={m} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
+              <span style={{fontSize:9,color:'#475569',fontWeight:700}}>{fmt(t/1000000)}M</span>
+              <div style={{width:'100%',background:'#3b82f6',borderRadius:'3px 3px 0 0',minHeight:4,height:`${Math.max((t/maxM*60),4).toFixed(0)}px`}}></div>
+              <span style={{fontSize:9,color:'#94a3b8',whiteSpace:'nowrap'}}>{m.replace('2026-','')}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
-function Table({cols, data, hl}) {
-  return React.createElement('div',{style:{overflowX:'auto',borderRadius:8,border:'1px solid #e5e7eb'}},
-    React.createElement('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:12}},
-      React.createElement('thead',null,
-        React.createElement('tr',null, cols.map((c,i)=>
-          React.createElement('th',{key:i,style:{padding:'8px 10px',background:'#f3f4f6',borderBottom:'2px solid #d1d5db',textAlign:c.a||'left',whiteSpace:'nowrap',fontWeight:600,color:'#374151',position:'sticky',top:0}},c.l)
-        ))
-      ),
-      React.createElement('tbody',null, data.map((row,ri)=>{
-        const isHl = hl ? hl(row) : false;
-        return React.createElement('tr',{key:ri,style:{background:isHl?'#fef9c3':ri%2===0?'#fff':'#f9fafb'}},
-          cols.map((c,ci)=>
-            React.createElement('td',{key:ci,style:{padding:'6px 10px',borderBottom:'1px solid #e5e7eb',textAlign:c.a||'left',whiteSpace:'nowrap',color:'#374151',fontVariantNumeric:c.a==='right'?'tabular-nums':'normal'}},
-              c.r ? c.r(row) : row[c.k])
-          )
-        );
-      }))
-    )
+function POTable() {
+  const [vendorF,setVendorF] = useState('');
+  const [typeF,setTypeF] = useState('');
+  const vendors = [...new Set(poData.map(d=>d.vendor))];
+  const types = [...new Set(poData.map(d=>d.type))];
+  const filtered = poData.filter(d=>(!vendorF||d.vendor===vendorF)&&(!typeF||d.type===typeF));
+  const total = filtered.reduce((s,d)=>s+d.total,0);
+  return (
+    <div>
+      <div className="filter-bar">
+        <select value={vendorF} onChange={e=>setVendorF(e.target.value)}>
+          <option value="">전체 업체</option>
+          {vendors.map(v=><option key={v} value={v}>{v}</option>)}
+        </select>
+        <select value={typeF} onChange={e=>setTypeF(e.target.value)}>
+          <option value="">전체 구분</option>
+          {types.map(t=><option key={t} value={t}>{t}</option>)}
+        </select>
+        <span style={{fontSize:11,color:'#64748b'}}>{filtered.length}건 조회</span>
+      </div>
+      <div className="table-wrap">
+        <table>
+          <thead><tr>
+            <th>No</th><th>PO No</th><th>업체</th><th>구분</th><th>품명</th>
+            <th>Invoice USD</th><th>적용환율</th><th>원화환산액</th>
+            <th>관세</th><th>부가세</th><th>관세사비</th><th>운송료</th>
+            <th>총수입원가</th><th>수량</th><th>개당원가</th><th>귀속월</th>
+          </tr></thead>
+          <tbody>
+            {filtered.map(d=>(
+              <tr key={d.po} className={d.total===0?'highlight':''}>
+                <td className="ctr">{d.no}</td>
+                <td style={{fontWeight:600}}>{d.po}</td>
+                <td className="ctr">{d.vendor}</td>
+                <td className="ctr"><TypeBadge type={d.type}/></td>
+                <td>{d.item}</td>
+                <td className="num">{fmtUSD(d.usd)}</td>
+                <td className="num">{d.rate?d.rate.toLocaleString('ko-KR',{minimumFractionDigits:1}):''}</td>
+                <td className="num">{d.krw?fmt(d.krw):''}</td>
+                <td className="num">{d.tariff?fmt(d.tariff):''}</td>
+                <td className="num">{d.vat?fmt(d.vat):''}</td>
+                <td className="num">{d.customsFee?fmt(d.customsFee):''}</td>
+                <td className="num">{d.shipFee?fmt(d.shipFee):''}</td>
+                <td className="num" style={{fontWeight:700}}>{d.total?fmt(d.total):'미확인'}</td>
+                <td className="ctr">{d.qty}</td>
+                <td className="num" style={{fontWeight:700,color:'#1e3a5f'}}>{d.unit?fmt(d.unit):''}</td>
+                <td className="ctr">{d.month}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot><tr className="total-row">
+            <td colSpan="12" className="ctr">합계</td>
+            <td className="num">{fmt(total)}</td>
+            <td colSpan="3"></td>
+          </tr></tfoot>
+        </table>
+      </div>
+    </div>
   );
 }
 
-function FxChart() {
-  const mn = Math.min(...fxData.map(d=>d.r))-10;
-  const mx = Math.max(...fxData.map(d=>d.r))+10;
-  const rng = mx-mn;
-  const w=700,h=200,pL=60,pR=50,pT=10,pB=30;
-  const cW=w-pL-pR, cH=h-pT-pB;
-  const pts = fxData.map((d,i)=>({x:pL+(i/(fxData.length-1))*cW, y:pT+cH-((d.r-mn)/rng)*cH, ...d}));
-  const pathD = pts.map((p,i)=>`${i===0?'M':'L'} ${p.x} ${p.y}`).join(' ');
-
-  const gridLines = [0,0.25,0.5,0.75,1].map(p=>{
-    const y=pT+cH*(1-p); const val=Math.round(mn+rng*p);
-    return React.createElement('g',{key:p},
-      React.createElement('line',{x1:pL,y1:y,x2:w-pR,y2:y,stroke:'#e5e7eb',strokeWidth:0.5}),
-      React.createElement('text',{x:pL-8,y:y+4,textAnchor:'end',fontSize:10,fill:'#9ca3af'},val)
-    );
-  });
-
-  const labels = pts.filter((_,i)=>i%4===0||i===pts.length-1).map((p,i)=>
-    React.createElement('text',{key:i,x:p.x,y:h-5,textAnchor:'middle',fontSize:9,fill:'#9ca3af'},p.s.slice(5))
-  );
-
-  return React.createElement('div',{style:{background:'#fff',borderRadius:10,padding:20,boxShadow:'0 1px 3px rgba(0,0,0,0.08)',marginBottom:24}},
-    React.createElement('div',{style:{fontSize:14,fontWeight:700,marginBottom:12,color:'#111827'}},'관세청 주간 고시환율 추이 (USD/KRW)'),
-    React.createElement('svg',{viewBox:`0 0 ${w} ${h}`,style:{width:'100%',maxWidth:700}},
-      ...gridLines,
-      React.createElement('path',{d:pathD,fill:'none',stroke:'#3b82f6',strokeWidth:2}),
-      ...pts.map((p,i)=>React.createElement('circle',{key:i,cx:p.x,cy:p.y,r:2.5,fill:'#3b82f6'})),
-      ...labels,
-      React.createElement('circle',{cx:pts[pts.length-1].x,cy:pts[pts.length-1].y,r:4,fill:'#dc2626'}),
-      React.createElement('text',{x:pts[pts.length-1].x-4,y:pts[pts.length-1].y-10,textAnchor:'end',fontSize:11,fill:'#dc2626',fontWeight:'bold'},fxData[fxData.length-1].r)
-    )
-  );
-}
-
-function VendorChart() {
-  const vm={};
-  [...poData,...licData].forEach(d=>{
-    if(!vm[d.vendor]) vm[d.vendor]={eq:0,lc:0};
-    if(d.type?.includes('워런티')||d.type?.includes('라이센스')||d.type==='Inspection') vm[d.vendor].lc+=d.total;
-    else vm[d.vendor].eq+=d.total;
-  });
-  const vs=Object.entries(vm).sort((a,b)=>(b[1].eq+b[1].lc)-(a[1].eq+a[1].lc));
-  const mx=Math.max(...vs.map(([,v])=>v.eq+v.lc));
-
-  return React.createElement('div',{style:{background:'#fff',borderRadius:10,padding:20,boxShadow:'0 1px 3px rgba(0,0,0,0.08)',marginBottom:24}},
-    React.createElement('div',{style:{fontSize:14,fontWeight:700,marginBottom:16,color:'#111827'}},'업체별 수입원가 현황'),
-    ...vs.map(([name,val])=>{
-      const t=val.eq+val.lc;
-      return React.createElement('div',{key:name,style:{marginBottom:12}},
-        React.createElement('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:4}},
-          React.createElement('span',{style:{fontSize:13,fontWeight:600}},name),
-          React.createElement('span',{style:{fontSize:12,color:'#6b7280'}},fmt(t)+'원')
-        ),
-        React.createElement('div',{style:{display:'flex',height:20,borderRadius:4,overflow:'hidden',background:'#f3f4f6'}},
-          val.eq>0 && React.createElement('div',{style:{width:(val.eq/mx*100)+'%',background:'#3b82f6'}}),
-          val.lc>0 && React.createElement('div',{style:{width:(val.lc/mx*100)+'%',background:'#8b5cf6'}})
-        ),
-        React.createElement('div',{style:{display:'flex',gap:12,marginTop:2,fontSize:11,color:'#9ca3af'}},
-          val.eq>0 && React.createElement('span',null,'장비/부품: '+fmt(val.eq)),
-          val.lc>0 && React.createElement('span',null,'라이센스/워런티: '+fmt(val.lc))
-        )
-      );
-    }),
-    React.createElement('div',{style:{display:'flex',gap:16,marginTop:12,fontSize:11}},
-      React.createElement('span',null, React.createElement('span',{style:{display:'inline-block',width:10,height:10,background:'#3b82f6',borderRadius:2,marginRight:4}}),'장비/부품'),
-      React.createElement('span',null, React.createElement('span',{style:{display:'inline-block',width:10,height:10,background:'#8b5cf6',borderRadius:2,marginRight:4}}),'라이센스/워런티')
-    )
+function LicTable() {
+  return (
+    <div className="table-wrap">
+      <table>
+        <thead><tr>
+          <th>No</th><th>PO No</th><th>업체</th><th>구분</th><th>품명</th>
+          <th>Invoice USD</th><th>적용환율</th><th>원화환산액</th>
+          <th>총수입원가</th><th>수량</th><th>개당원가</th>
+          <th>계약시작</th><th>계약종료</th><th>귀속월</th>
+        </tr></thead>
+        <tbody>
+          {licData.map(d=>(
+            <tr key={d.po} className={d.total===0?'highlight':''}>
+              <td className="ctr">{d.no}</td>
+              <td style={{fontWeight:600}}>{d.po}</td>
+              <td className="ctr">{d.vendor}</td>
+              <td className="ctr"><TypeBadge type={d.type}/></td>
+              <td>{d.item}</td>
+              <td className="num">{fmtUSD(d.usd)}</td>
+              <td className="num">{d.rate?d.rate.toLocaleString('ko-KR',{minimumFractionDigits:1}):''}</td>
+              <td className="num">{d.krw?fmt(d.krw):''}</td>
+              <td className="num" style={{fontWeight:700}}>{d.total?fmt(d.total):'미확인'}</td>
+              <td className="ctr">{d.qty}</td>
+              <td className="num" style={{fontWeight:700,color:'#6d28d9'}}>{d.unit?fmt(d.unit):''}</td>
+              <td className="ctr">{d.contractStart}</td>
+              <td className="ctr">{d.contractEnd}</td>
+              <td className="ctr">{d.month}</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot><tr className="total-row">
+          <td colSpan="8" className="ctr">합계</td>
+          <td className="num">{fmt(LIC_TOTAL)}</td>
+          <td colSpan="5"></td>
+        </tr></tfoot>
+      </table>
+    </div>
   );
 }
 
-const TABS = [{id:'overview',l:'개요'},{id:'po',l:'PO별 수입원가'},{id:'lic',l:'라이센스/워런티'},{id:'remit',l:'외화송금내역'},{id:'lc',l:'Usance L/C'},{id:'fx',l:'환율'}];
+function RemitTable() {
+  return (
+    <div className="table-wrap">
+      <table>
+        <thead><tr>
+          <th>No</th><th>송금일</th><th>수취인</th><th>PO 참조</th>
+          <th>USD</th><th>적용환율</th><th>KRW 총액</th>
+        </tr></thead>
+        <tbody>
+          {remitData.map((d,i)=>(
+            <tr key={i}>
+              <td className="ctr">{d.no}</td>
+              <td className="ctr">{d.date}</td>
+              <td>{d.recipient}</td>
+              <td>{d.poRef}</td>
+              <td className="num">{fmtUSD(d.usd)}</td>
+              <td className="num">{d.rate?d.rate.toLocaleString('ko-KR',{minimumFractionDigits:1}):''}</td>
+              <td className="num" style={{fontWeight:700}}>{d.totalKrw?fmt(d.totalKrw):''}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function LCTable() {
+  const today = new Date();
+  return (
+    <div className="table-wrap">
+      <table>
+        <thead><tr>
+          <th>No</th><th>PO No</th><th>업체</th><th>품명</th>
+          <th>USD</th><th>개설일</th><th>만기일</th><th>D-Day</th><th>상태</th>
+        </tr></thead>
+        <tbody>
+          {lcData.map((d,i)=>{
+            const due = d.dueDate ? new Date(d.dueDate) : null;
+            const dday = due ? Math.ceil((due-today)/(1000*60*60*24)) : null;
+            const isOverdue = dday!==null&&dday<0;
+            const isUrgent = dday!==null&&dday>=0&&dday<=30;
+            return (
+              <tr key={i} style={{background:isOverdue?'#fee2e2':isUrgent?'#fef9c3':''}}>
+                <td className="ctr">{d.no}</td>
+                <td style={{fontWeight:600}}>{d.po}</td>
+                <td className="ctr">{d.vendor}</td>
+                <td>{d.item}</td>
+                <td className="num">{fmtUSD(d.usd)}</td>
+                <td className="ctr">{d.openDate}</td>
+                <td className="ctr">{d.dueDate}</td>
+                <td className="ctr" style={{fontWeight:700,color:isOverdue?'#dc2626':isUrgent?'#92400e':'#475569'}}>
+                  {dday!==null?(isOverdue?`D+${Math.abs(dday)}`:`D-${dday}`):''}
+                </td>
+                <td className="ctr"><span className={`badge ${d.status==='상환완료'?'badge-green':isOverdue?'badge-red':isUrgent?'badge-orange':'badge-blue'}`}>{d.status}</span></td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function FXTable() {
+  const recent = fxData.slice(-20);
+  const rates = recent.map(f=>f.rate);
+  const minR=Math.min(...rates)*0.998, maxR=Math.max(...rates)*1.002;
+  const W=600, H=100;
+  const pts = rates.map((r,i)=>{
+    const x=(i/(rates.length-1||1))*W, y=H-((r-minR)/(maxR-minR||1))*H;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  return (
+    <div>
+      <div className="chart-wrap" style={{marginBottom:16}}>
+        <div className="chart-title">주간 환율 추이</div>
+        <svg width="100%" viewBox={`0 0 ${W} ${H+24}`}>
+          <polyline points={pts} fill="none" stroke="#3b82f6" strokeWidth="2.5"/>
+          {recent.map((f,i)=>{
+            const x=(i/(recent.length-1||1))*W, y=H-((f.rate-minR)/(maxR-minR||1))*H;
+            return <circle key={i} cx={x} cy={y} r="3.5" fill="#3b82f6"/>;
+          })}
+          <text x="0" y={H+18} fontSize="10" fill="#94a3b8">{recent[0]?.start}</text>
+          <text x={W} y={H+18} fontSize="10" fill="#94a3b8" textAnchor="end">{recent[recent.length-1]?.start}</text>
+        </svg>
+      </div>
+      <div className="table-wrap">
+        <table>
+          <thead><tr><th>적용시작일</th><th>적용종료일</th><th>통화</th><th>수입환율 (KRW)</th><th>전주 대비</th></tr></thead>
+          <tbody>
+            {[...fxData].reverse().map((d,i,arr)=>{
+              const prev=arr[i+1];
+              const diff=prev?d.rate-prev.rate:0;
+              const isUp=diff>0, isDown=diff<0;
+              return (
+                <tr key={i}>
+                  <td className="ctr">{d.start}</td>
+                  <td className="ctr">{d.end}</td>
+                  <td className="ctr">{d.currency}</td>
+                  <td className="num" style={{fontWeight:700,fontSize:13}}>{d.rate.toLocaleString('ko-KR',{minimumFractionDigits:2})}</td>
+                  <td className="ctr" style={{color:isUp?'#dc2626':isDown?'#059669':'#94a3b8',fontWeight:600}}>
+                    {prev?(isUp?'▲':'▼')+Math.abs(diff).toFixed(2):'-'}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
 
 function App() {
-  const [tab, setTab] = useState('overview');
-  const [vf, setVf] = useState('전체');
-  const [tf, setTf] = useState('전체');
-  const vendors = useMemo(()=>['전체',...new Set(poData.map(d=>d.vendor))],[]);
-  const types = useMemo(()=>['전체',...new Set(poData.map(d=>d.type))],[]);
-  const filtered = useMemo(()=>poData.filter(d=>(vf==='전체'||d.vendor===vf)&&(tf==='전체'||d.type===tf)),[vf,tf]);
-
-  const eqTotal = poData.reduce((s,d)=>s+d.total,0);
-  const lcTotal = licData.filter(d=>d.type!=='Inspection').reduce((s,d)=>s+d.total,0);
-  const grand = eqTotal+lcTotal;
-
-  return React.createElement('div',{style:{fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif",background:'#f8fafc',minHeight:'100vh',padding:24}},
-    React.createElement('div',{style:{maxWidth:1400,margin:'0 auto'}},
-      // Header
-      React.createElement('div',{style:{marginBottom:20}},
-        React.createElement('div',{style:{display:'flex',alignItems:'center',gap:12}},
-          React.createElement('h1',{style:{fontSize:22,fontWeight:800,color:'#111827',margin:0}},'RNR 2026년 수입원가 산출표'),
-          React.createElement('a',{href:'https://docs.google.com/spreadsheets/d/1Nxh8QbxTghlqNC-Rsk6WkUpFCE1ETMoPbUHPze0SitE/edit?gid=956759540#gid=956759540',target:'_blank',rel:'noopener noreferrer',style:{display:'inline-flex',alignItems:'center',gap:4,padding:'4px 10px',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:6,fontSize:12,fontWeight:600,color:'#059669',textDecoration:'none'}},
-            '📊 원본 시트')
-        ),
-        React.createElement('p',{style:{fontSize:13,color:'#6b7280',margin:'4px 0 0'}},'기준일: 2026-04-10 | 회계처리용 통합 데이터')
-      ),
-      // Tabs
-      React.createElement('div',{style:{display:'flex',gap:0,marginBottom:20,borderBottom:'2px solid #e5e7eb',width:'100%'}},
-        ...TABS.map(t=>React.createElement('button',{key:t.id,onClick:()=>setTab(t.id),style:{flex:1,padding:'8px 4px',fontSize:13,fontWeight:tab===t.id?700:500,color:tab===t.id?'#3b82f6':'#6b7280',background:'none',border:'none',borderBottom:tab===t.id?'2px solid #3b82f6':'2px solid transparent',cursor:'pointer',whiteSpace:'nowrap',marginBottom:-2,textAlign:'center'}},t.l))
-      ),
-
-      // OVERVIEW
-      tab==='overview' && React.createElement(React.Fragment,null,
-        React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:12,marginBottom:24}},
-          React.createElement(Card,{label:'장비/부품 총 수입원가',value:fmt(eqTotal)+'원',sub:fmtU(poData.reduce((s,d)=>s+d.usd,0)),color:'#3b82f6'}),
-          React.createElement(Card,{label:'라이센스/워런티 합계',value:fmt(lcTotal)+'원',sub:fmtU(licData.reduce((s,d)=>s+d.usd,0)),color:'#8b5cf6'}),
-          React.createElement(Card,{label:'총 합계',value:fmt(grand)+'원',sub:fmtU(poData.reduce((s,d)=>s+d.usd,0)+licData.reduce((s,d)=>s+d.usd,0)),color:'#059669'}),
-          React.createElement(Card,{label:'미상환 L/C',value:fmtU(lcData.reduce((s,d)=>s+d.usd,0)),sub:'D-Day: '+lcData[0].dDay+'일 / '+lcData[1].dDay+'일',color:'#dc2626'}),
-          React.createElement(Card,{label:'최신 고시환율',value:'₩'+Number(fxData[fxData.length-1].r).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}),sub:fxData[fxData.length-1].s+' ~ '+fxData[fxData.length-1].e,color:'#f59e0b'})
-        ),
-        React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}},
-          React.createElement(VendorChart),
-          React.createElement(FxChart)
-        ),
-        // Monthly
-        React.createElement('div',{style:{background:'#fff',borderRadius:10,padding:20,boxShadow:'0 1px 3px rgba(0,0,0,0.08)',marginTop:16}},
-          React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}},
-            React.createElement('div',{style:{fontSize:14,fontWeight:700,color:'#111827'}},'월별 수입원가 현황'),
-            React.createElement('div',{style:{display:'flex',gap:16,fontSize:11}},
-              React.createElement('span',{style:{display:'flex',alignItems:'center',gap:4}},React.createElement('span',{style:{width:10,height:10,borderRadius:2,background:'#3b82f6',display:'inline-block'}}),' 장비/부품'),
-              React.createElement('span',{style:{display:'flex',alignItems:'center',gap:4}},React.createElement('span',{style:{width:10,height:10,borderRadius:2,background:'#8b5cf6',display:'inline-block'}}),' 라이센스/워런티')
-            )
-          ),
-          React.createElement('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:12}},
-            React.createElement('thead',null,
-              React.createElement('tr',null,
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'left',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600,width:80}},'귀속월'),
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'left',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600}},''),
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'right',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600,width:120}},'장비/부품'),
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'right',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600,width:120}},'라이센스'),
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'right',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600,width:130}},'합계')
-              )
-            ),
-            React.createElement('tbody',null,
-              (()=>{
-                const m={};
-                poData.forEach(d=>{if(!m[d.month])m[d.month]={eq:0,lc:0};m[d.month].eq+=d.total;});
-                licData.forEach(d=>{if(!m[d.month])m[d.month]={eq:0,lc:0};m[d.month].lc+=d.total;});
-                const sorted=Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0]));
-                const mx=Math.max(...sorted.map(([,v])=>v.eq+v.lc));
-                const grandEq=sorted.reduce((s,[,v])=>s+v.eq,0);
-                const grandLc=sorted.reduce((s,[,v])=>s+v.lc,0);
-                return [...sorted.map(([mo,v],idx)=>
-                  React.createElement('tr',{key:mo,style:{background:idx%2===0?'#fff':'#f9fafb'}},
-                    React.createElement('td',{style:{padding:'8px',fontWeight:600,color:'#111827'}},mo),
-                    React.createElement('td',{style:{padding:'8px 4px'}},
-                      React.createElement('div',{style:{display:'flex',height:18,borderRadius:3,overflow:'hidden',background:'#f3f4f6'}},
-                        v.eq>0&&React.createElement('div',{style:{width:(v.eq/mx*100)+'%',background:'#3b82f6',borderRadius:'3px 0 0 3px'}}),
-                        v.lc>0&&React.createElement('div',{style:{width:(v.lc/mx*100)+'%',background:'#8b5cf6',borderRadius:v.eq>0?'0 3px 3px 0':'3px'}})
-                      )
-                    ),
-                    React.createElement('td',{style:{padding:'8px',textAlign:'right',fontVariantNumeric:'tabular-nums',color:'#374151'}},v.eq?fmt(v.eq):'-'),
-                    React.createElement('td',{style:{padding:'8px',textAlign:'right',fontVariantNumeric:'tabular-nums',color:'#374151'}},v.lc?fmt(v.lc):'-'),
-                    React.createElement('td',{style:{padding:'8px',textAlign:'right',fontWeight:600,fontVariantNumeric:'tabular-nums',color:'#111827'}},fmt(v.eq+v.lc)+'원')
-                  )
-                ),
-                React.createElement('tr',{key:'total',style:{background:'#f0f4ff',borderTop:'2px solid #d1d5db'}},
-                  React.createElement('td',{style:{padding:'8px',fontWeight:700,color:'#1e3a5f'}},'합계'),
-                  React.createElement('td',null),
-                  React.createElement('td',{style:{padding:'8px',textAlign:'right',fontWeight:700,fontVariantNumeric:'tabular-nums',color:'#1e3a5f'}},fmt(grandEq)),
-                  React.createElement('td',{style:{padding:'8px',textAlign:'right',fontWeight:700,fontVariantNumeric:'tabular-nums',color:'#1e3a5f'}},fmt(grandLc)),
-                  React.createElement('td',{style:{padding:'8px',textAlign:'right',fontWeight:700,fontVariantNumeric:'tabular-nums',color:'#1e3a5f'}},fmt(grandEq+grandLc)+'원')
-                )];
-              })()
-            )
-          )
-        )
-      ),
-
-      // PO TABLE
-      tab==='po' && React.createElement(React.Fragment,null,
-        React.createElement('div',{style:{display:'flex',gap:12,marginBottom:16}},
-          React.createElement('select',{value:vf,onChange:e=>setVf(e.target.value),style:{padding:'6px 12px',borderRadius:6,border:'1px solid #d1d5db',fontSize:13}},vendors.map(v=>React.createElement('option',{key:v},v))),
-          React.createElement('select',{value:tf,onChange:e=>setTf(e.target.value),style:{padding:'6px 12px',borderRadius:6,border:'1px solid #d1d5db',fontSize:13}},types.map(v=>React.createElement('option',{key:v},v))),
-          React.createElement('span',{style:{fontSize:12,color:'#6b7280',alignSelf:'center'}},filtered.length+'건')
-        ),
-        React.createElement(Table,{
-          cols:[
-            {k:'no',l:'No.',a:'center'},{k:'po',l:'PO No.'},{k:'vendor',l:'업체'},{k:'type',l:'구분'},{k:'item',l:'품명'},
-            {l:'Invoice(USD)',a:'right',r:r=>fmtU(r.usd)},{l:'적용환율',a:'right',r:r=>r.rate?Number(r.rate).toLocaleString('ko-KR',{minimumFractionDigits:1,maximumFractionDigits:1}):'-'},
-            {l:'관세',a:'right',r:r=>fmt(r.tariff)},{l:'부가세',a:'right',r:r=>fmt(r.vat)},
-            {l:'운송료',a:'right',r:r=>fmt(r.shipFee)},{l:'총 수입원가',a:'right',r:r=>fmt(r.total)},
-            {k:'qty',l:'수량',a:'center'},{l:'개당 원가',a:'right',r:r=>fmt(r.unit)},{k:'month',l:'귀속월'}
-          ],
-          data:filtered,
-          hl:r=>r.total===0
-        }),
-        React.createElement('div',{style:{marginTop:12,padding:12,background:'#f0fdf4',borderRadius:8,fontSize:12,color:'#166534'}},
-          React.createElement('strong',null,'합계: '),
-          'Invoice '+fmtU(filtered.reduce((s,d)=>s+d.usd,0))+' | 총 수입원가 '+fmt(filtered.reduce((s,d)=>s+d.total,0))+'원'
-        )
-      ),
-
-      // LICENSE
-      tab==='lic' && React.createElement(React.Fragment,null,
-        React.createElement(Table,{
-          cols:[
-            {k:'no',l:'No.',a:'center'},{k:'po',l:'PO No.'},{k:'vendor',l:'업체'},{k:'type',l:'구분'},{k:'item',l:'품명'},
-            {l:'Invoice(USD)',a:'right',r:r=>fmtU(r.usd)},{k:'remit',l:'송금일'},
-            {l:'수입원가(KRW)',a:'right',r:r=>fmt(r.total)},{k:'start',l:'계약시작'},{k:'end',l:'계약종료'}
-          ],
-          data:licData, hl:r=>r.total===0
-        }),
-        React.createElement('div',{style:{marginTop:12,padding:12,background:'#f5f3ff',borderRadius:8,fontSize:12,color:'#5b21b6'}},
-          React.createElement('strong',null,'합계: '),
-          'Invoice '+fmtU(licData.reduce((s,d)=>s+d.usd,0))+' | 수입원가 '+fmt(licData.reduce((s,d)=>s+d.total,0))+'원'
-        )
-      ),
-
-      // REMITTANCE
-      tab==='remit' && React.createElement(React.Fragment,null,
-        React.createElement(Table,{
-          cols:[
-            {k:'no',l:'No.',a:'center'},{k:'date',l:'송금일'},{k:'to',l:'수취인'},{k:'ref',l:'PO 참조'},
-            {l:'USD금액',a:'right',r:r=>fmtU(r.usd)},{l:'적용환율',a:'right',r:r=>r.rate?Number(r.rate).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}):'-'},
-            {l:'수수료(KRW)',a:'right',r:r=>fmt(r.fee)},{l:'전신료(KRW)',a:'right',r:r=>fmt(r.wire)},
-            {l:'KRW총액',a:'right',r:r=>fmt(r.krw)}
-          ],
-          data:remitData, hl:r=>r.krw===0
-        }),
-        React.createElement('div',{style:{marginTop:12,padding:12,background:'#eff6ff',borderRadius:8,fontSize:12,color:'#1e40af'}},
-          React.createElement('strong',null,'합계: '),
-          '송금 '+remitData.length+'건 | USD '+fmtU(remitData.reduce((s,d)=>s+d.usd,0))+' | KRW '+fmt(remitData.reduce((s,d)=>s+d.krw,0))+'원'
-        )
-      ),
-
-      // L/C
-      tab==='lc' && React.createElement(React.Fragment,null,
-        // 요약 카드
-        React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:12,marginBottom:20}},
-          React.createElement(Card,{label:'미상환 L/C 합계',value:fmtU(lcData.reduce((s,d)=>s+d.usd,0)),sub:'기준일: 2026-04-10',color:'#dc2626'}),
-          React.createElement(Card,{label:'총 L/C 한도',value:fmtU(lcBankData.reduce((s,d)=>s+d.limit,0)),sub:'신한+하나+우리',color:'#3b82f6'}),
-          React.createElement(Card,{label:'잔여 가용 한도',value:fmtU(lcBankData.reduce((s,d)=>s+d.avail,0)),sub:'활성 은행 기준',color:'#059669'}),
-          React.createElement(Card,{label:'가장 빠른 상환',value:'D-'+Math.min(...lcData.map(d=>d.dDay)),sub:lcData.reduce((a,b)=>a.dDay<b.dDay?a:b).po+' ('+lcData.reduce((a,b)=>a.dDay<b.dDay?a:b).due+')',color:'#f59e0b'})
-        ),
-        // 은행별 한도
-        React.createElement('div',{style:{fontSize:13,fontWeight:700,marginBottom:8,color:'#111827'}},'은행별 Usance L/C 한도 현황'),
-        React.createElement(Table,{
-          cols:[
-            {k:'bank',l:'은행'},{l:'총 한도(USD)',a:'right',r:r=>fmtU(r.limit)},{l:'현재 오픈(USD)',a:'right',r:r=>fmtU(r.open)},
-            {l:'잔여 가용(USD)',a:'right',r:r=>fmtU(r.avail)},
-            {l:'활성',a:'center',r:r=>React.createElement('span',{style:{color:r.active==='활성'?'#059669':'#9ca3af',fontWeight:600}},r.active)},
-            {k:'note',l:'비고'}
-          ],
-          data:lcBankData
-        }),
-        // 미상환 현황
-        React.createElement('div',{style:{fontSize:13,fontWeight:700,margin:'20px 0 8px',color:'#111827'}},'미상환 L/C 현황'),
-        React.createElement(Table,{
-          cols:[
-            {k:'no',l:'No.',a:'center'},{k:'po',l:'PO No.'},{k:'vendor',l:'업체'},
-            {l:'개설금액(USD)',a:'right',r:r=>fmtU(r.usd)},{k:'bank',l:'개설은행'},{k:'lc',l:'L/C No.'},
-            {k:'open',l:'개설일'},{k:'exp',l:'만기일'},{k:'days',l:'기간'},{k:'accept',l:'인수일'},{k:'due',l:'상환예정일'},
-            {l:'D-Day',a:'center',r:r=>React.createElement('span',{style:{padding:'2px 8px',borderRadius:12,background:r.dDay<=30?'#fef2f2':r.dDay<=60?'#fffbeb':'#f0fdf4',color:r.dDay<=30?'#dc2626':r.dDay<=60?'#d97706':'#059669',fontWeight:700,fontSize:11}},'D-'+r.dDay)}
-          ],
-          data:lcData
-        }),
-        // 수입/통관 정보
-        React.createElement('div',{style:{fontSize:13,fontWeight:700,margin:'20px 0 8px',color:'#111827'}},'수입/통관 정보'),
-        React.createElement(Table,{
-          cols:[
-            {k:'po',l:'PO No.'},{k:'decNo',l:'수입신고번호'},{k:'decDate',l:'수리일자'},
-            {l:'신고환율(₩)',a:'right',r:r=>r.decRate?r.decRate.toLocaleString():'-'},
-            {l:'관세(KRW)',a:'right',r:r=>fmt(r.tariff)},{l:'부가세(KRW)',a:'right',r:r=>fmt(r.vat)},
-            {k:'broker',l:'관세사'},{l:'관세사비',a:'right',r:r=>fmt(r.brokerFee)},
-            {k:'shipper',l:'운송사'},{l:'운송료',a:'right',r:r=>fmt(r.shipFee)},
-            {l:'해외수수료(USD)',a:'right',r:r=>fmtU(r.overseaFee)}
-          ],
-          data:lcCustomsData
-        }),
-        React.createElement('div',{style:{marginTop:10,fontSize:11,color:'#9ca3af'}},'※ 출처: 총 한도 – Slack 2024-11-19 / 활성 여부 – Slack 2026-03-16 도원석')
-      ),
-
-      // FX
-      tab==='fx' && React.createElement(React.Fragment,null,
-        React.createElement(FxChart),
-        React.createElement(Table,{
-          cols:[
-            {k:'s',l:'적용 시작일'},{k:'e',l:'적용 종료일'},
-            {l:'수입환율 (₩/USD)',a:'right',r:r=>React.createElement('span',{style:{fontWeight:600}},Number(r.r).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}))},
-            {l:'변동',a:'right',r:r=>{
-              const idx=fxData.indexOf(r); if(idx===0) return '-';
-              const d=r.r-fxData[idx-1].r;
-              return React.createElement('span',{style:{color:d>0?'#dc2626':d<0?'#059669':'#6b7280',fontWeight:600}},(d>0?'+':'')+d.toFixed(2));
-            }}
-          ],
-          data:[...fxData].reverse()
-        })
-      ),
-
-      React.createElement('div',{style:{marginTop:24,textAlign:'center',fontSize:11,color:'#9ca3af'}},'RNR 수입원가 산출표 | 기준일 2026-04-10 | 노란색 하이라이트 = 미확인 항목')
-    )
+  const [tab,setTab] = useState(0);
+  const tabs = ['개요','PO별 수입원가','라이센스/워런티','외화송금내역','Usance L/C','환율'];
+  const panels = [<Overview/>,<POTable/>,<LicTable/>,<RemitTable/>,<LCTable/>,<FXTable/>];
+  return (
+    <div>
+      <div className="header">
+        <div>
+          <h1>🏭 RNR 수입원가 대시보드</h1>
+          <div style={{fontSize:11,opacity:0.7,marginTop:2}}>PO별 개당 수입원가 현황</div>
+        </div>
+        <div className="meta">
+          <div>기준일: {BASE_DATE}</div>
+          <div>총 수입원가: ₩{fmt(GRAND_TOTAL)}</div>
+          <div>최신환율: ₩{LATEST_RATE.toLocaleString()}</div>
+        </div>
+      </div>
+      <div className="tabs">
+        {tabs.map((t,i)=><div key={i} className={`tab${tab===i?' active':''}`} onClick={()=>setTab(i)}>{t}</div>)}
+      </div>
+      <div className="content">{panels[tab]}</div>
+    </div>
   );
 }
 
-ReactDOM.render(React.createElement(App), document.getElementById('root'));
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
