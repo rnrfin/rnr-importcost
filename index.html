@@ -204,7 +204,7 @@ function FxChart() {
       ...pts.map((p,i)=>React.createElement('circle',{key:i,cx:p.x,cy:p.y,r:2.5,fill:'#3b82f6'})),
       ...labels,
       React.createElement('circle',{cx:pts[pts.length-1].x,cy:pts[pts.length-1].y,r:4,fill:'#dc2626'}),
-      React.createElement('text',{x:pts[pts.length-1].x-4,y:pts[pts.length-1].y-10,textAnchor:'end',fontSize:11,fill:'#dc2626',fontWeight:'bold'},fxData[fxData.length-1].r)
+      React.createElement('text',{x:pts[pts.length-1].x+8,y:pts[pts.length-1].y+4,textAnchor:'start',fontSize:11,fill:'#dc2626',fontWeight:'bold'},fxData[fxData.length-1].r)
     )
   );
 }
