@@ -179,7 +179,7 @@ function FxChart() {
   const mn = Math.min(...fxData.map(d=>d.r))-10;
   const mx = Math.max(...fxData.map(d=>d.r))+10;
   const rng = mx-mn;
-  const w=700,h=200,pL=60,pR=50,pT=10,pB=30;
+  const w=700,h=200,pL=60,pR=90,pT=10,pB=30;
   const cW=w-pL-pR, cH=h-pT-pB;
   const pts = fxData.map((d,i)=>({x:pL+(i/(fxData.length-1))*cW, y:pT+cH-((d.r-mn)/rng)*cH, ...d}));
   const pathD = pts.map((p,i)=>`${i===0?'M':'L'} ${p.x} ${p.y}`).join(' ');
@@ -252,9 +252,9 @@ function App() {
   const [vf, setVf] = useState('전체');
   const [tf, setTf] = useState('전체');
   const [mf, setMf] = useState('전체');
-  const poData2026 = useMemo(()=>poData.filter(d=>d.month && d.month.startsWith('2026')),[]);
-  const licData2026 = useMemo(()=>licData.filter(d=>d.month && d.month.startsWith('2026')),[]);
-  const remitData2026 = useMemo(()=>remitData.filter(d=>d.date && d.date.startsWith('2026')),[]);
+  const poData2026 = useMemo(()=>poData,[]);
+  const licData2026 = useMemo(()=>licData,[]);
+  const remitData2026 = useMemo(()=>remitData,[]);
   const vendors = useMemo(()=>['전체',...new Set(poData2026.map(d=>d.vendor))],[]);
   const types = useMemo(()=>['전체',...new Set(poData2026.map(d=>d.type))],[]);
   const months = useMemo(()=>['전체',...[...new Set(poData2026.map(d=>d.month))].sort()],[]);
