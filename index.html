@@ -21,52 +21,52 @@ const fmt = (v) => { if (!v || v==='-') return '-'; return Number(v).toLocaleStr
 const fmtU = (v) => { if (!v || v==='-') return '-'; return '$'+Number(v).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2}); };
 
 const poData = [
-  {no:1,po:"CPO678-1",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2025-11-04",remitDate:"2025-12-16",usd:139083,rate:1479.7,krw:212471386,tariff:1682291,vat:20784342,broker:"다민관세사",brokerFee:149729,shipper:"진로직스",shipFee:2470670,sub:22616362,total:230936680,qty:1,unit:230936680,month:"2025-12",item:"Projector"},
-  {no:2,po:"GPO451",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2025-11-21",remitDate:"2025-12-29",usd:9060,rate:1439.1,krw:18264679,tariff:0,vat:1352610,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:0,sub:1352610,total:14421436,qty:1,unit:14421436,month:"2025-12",item:"IMB/Server"},
-  {no:3,po:"CPO679",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2025-11-26",remitDate:"2025-12-16",usd:4474,rate:1479.7,krw:212471386,tariff:560630,vat:756850,broker:"아인관세사",brokerFee:36000,shipper:"진로직스",shipFee:590823,sub:1353480,total:8566042,qty:1,unit:8566042,month:"2025-11",item:"Parts"},
-  {no:4,po:"CPO684",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2025-12-02",remitDate:"-",usd:362.25,rate:0,krw:0,tariff:0,vat:0,broker:"-",brokerFee:0,shipper:"-",shipFee:0,sub:0,total:0,qty:1,unit:0,month:"2025-12",item:"Parts (국내)"},
-  {no:5,po:"CPO680",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2025-12-04",remitDate:"2026-01-13",usd:252,rate:1479,krw:412788,tariff:29879,vat:37658,broker:"다민관세사",brokerFee:271,shipper:"진로직스",shipFee:4477,sub:67808,total:485073,qty:1,unit:485073,month:"2025-12",item:"Parts"},
-  {no:6,po:"GPO460",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2025-12-16",remitDate:"2026-01-21",usd:2710,rate:1475.7,krw:5505104,tariff:0,vat:399770,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:0,sub:399770,total:4431886,qty:1,unit:4431886,month:"2026-01",item:"SR-1000"},
-  {no:7,po:"LPO001",vendor:"Lemon",terms:"TT Advance",type:"장비",poDate:"2025-12-16",remitDate:"2026-01-30",usd:5056.8,rate:1445.5,krw:7356514,tariff:240450,vat:831820,broker:"아인관세사",brokerFee:36000,shipper:"진로직스",shipFee:581438,sub:1108270,total:9046222,qty:6,unit:1507704,month:"2026-03",item:"ICP+TPC (6EA)"},
-  {no:8,po:"CPO678-2",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2025-12-18",remitDate:"2026-03-06",usd:137850,rate:1477.6,krw:203737212,tariff:0,vat:19976300,broker:"조운관세사",brokerFee:263400,shipper:"진로직스",shipFee:2385057,sub:20239700,total:226361969,qty:3,unit:75453990,month:"2026-01",item:"CP4425-RGB Projector (3EA)"},
-  {no:9,po:"CPO682",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2025-12-19",remitDate:"2026-02-04",usd:20174,rate:1454.7,krw:36117425,tariff:0,vat:3156262,broker:"아인관세사",brokerFee:92978,shipper:"진로직스",shipFee:1864148,sub:3249240,total:34500859,qty:1,unit:34500859,month:"2025-12",item:"Projector/Parts"},
-  {no:10,po:"CPO683",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2025-12-19",remitDate:"2026-02-04",usd:4620,rate:1454.7,krw:36117425,tariff:84170,vat:722808,broker:"아인관세사",brokerFee:14422,shipper:"진로직스",shipFee:426904,sub:821400,total:7978259,qty:1,unit:7978259,month:"2025-12",item:"Lens"},
-  {no:11,po:"MPO66",vendor:"MAG",terms:"T/T",type:"장비",poDate:"2025-12-20",remitDate:"2026-01-21",usd:9626.35,rate:1476,krw:14256012,tariff:0,vat:1704871,broker:"아인관세사",brokerFee:93591,shipper:"진로직스",shipFee:2690702,sub:1798462,total:18745177,qty:13,unit:1441937,month:"2026-02",item:"DCO-16000/L-SUB (13EA)"},
-  {no:12,po:"MPO65",vendor:"MAG",terms:"T/T",type:"장비",poDate:"2025-12-20",remitDate:"2025-12-16",usd:4936,rate:1480,krw:22306800,tariff:0,vat:874189,broker:"아인관세사",brokerFee:47990,shipper:"진로직스",shipFee:1379682,sub:922179,total:9622763,qty:1,unit:9622763,month:"2026-02",item:"Audio Amp"},
-  {no:13,po:"CPO689",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2026-01-03",remitDate:"2026-02-19",usd:2745,rate:1451.7,krw:25506948,tariff:20430,vat:409790,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:162080,sub:430220,total:4584578,qty:1,unit:4584578,month:"2026-01",item:"Parts"},
-  {no:14,po:"GPO467",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2026-01-07",remitDate:"2026-04-01",usd:1700,rate:1506.4,krw:9919642,tariff:0,vat:250080,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:136050,sub:250080,total:2959495,qty:20,unit:147975,month:"2026-02",item:"IMB Parts"},
-  {no:15,po:"CPO692-1",vendor:"Christie",terms:"Net 45 days",type:"부품(렌즈)",poDate:"2026-01-13",remitDate:"-",usd:11000,rate:0,krw:0,tariff:1297810,vat:1752040,broker:"-",brokerFee:0,shipper:"DHL",shipFee:1553086,sub:3049850,total:4602936,qty:2,unit:2301468,month:"2026-02",item:"Lens (2EA)"},
-  {no:16,po:"CPO692-2",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2026-01-13",remitDate:"-",usd:286580,rate:0,krw:0,tariff:3450410,vat:42329590,broker:"조운관세사",brokerFee:250000,shipper:"진로직스",shipFee:2649525,sub:46030000,total:48679525,qty:28,unit:1738554,month:"2026-02",item:"Projector+Lens+ASSY (28EA)"},
-  {no:17,po:"CPO690",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2026-01-28",remitDate:"2026-04-01",usd:9740,rate:1505.7,krw:51777431,tariff:0,vat:1493440,broker:"-",brokerFee:0,shipper:"DHL",shipFee:1561040,sub:1493440,total:17734348,qty:20,unit:886717,month:"2026-01",item:"ASSY Liquid Cooling (20EA)"},
-  {no:18,po:"CPO693",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2026-02-18",remitDate:"-",usd:35674,rate:0,krw:0,tariff:0,vat:0,broker:"-",brokerFee:0,shipper:"-",shipFee:0,sub:0,total:0,qty:1,unit:0,month:"2026-02",item:"Projector (한국)"},
-  {no:19,po:"GPO468-1",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2026-02-27",remitDate:"2026-04-14",usd:36190,rate:1481.9,krw:53629961,tariff:0,vat:5395574,broker:"조운관세사",brokerFee:137864,shipper:"진로직스",shipFee:1232133,sub:5533438,total:60427006,qty:10,unit:6042701,month:"2026-03",item:"SR-1000 IMB (10EA)"},
-  {no:20,po:"GPO472",vendor:"GDC",terms:"Net 30 days",type:"부품",poDate:"2026-03-07",remitDate:"2026-04-14",usd:180,rate:1481.9,krw:266742,tariff:0,vat:26836,broker:"조운관세사",brokerFee:536,shipper:"진로직스",shipFee:6128,sub:27372,total:300399,qty:1,unit:300399,month:"2026-03",item:"TMS Parts"},
-  {no:21,po:"GPO468-2",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2026-03-07",remitDate:"2026-04-14",usd:21280,rate:1481.9,krw:31534832,tariff:0,vat:4747530,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:904960,sub:4747530,total:37205829,qty:4,unit:9301457,month:"2026-03",item:"IMB"},
-  {no:22,po:"CPO695-1",vendor:"Christie",terms:"Net 45 days",type:"부품(Fan)",poDate:"2026-03-17",remitDate:"-",usd:2058,rate:0,krw:0,tariff:0,vat:350480,broker:"운서합동",brokerFee:0,shipper:"DHL",shipFee:6264783,sub:350480,total:6615263,qty:7,unit:945038,month:"2026-03",item:"Fan (7EA)"},
-  {no:23,po:"CPO695-2",vendor:"Christie",terms:"Net 45 days",type:"부품(Filter)",poDate:"2026-03-17",remitDate:"-",usd:1977,rate:0,krw:0,tariff:50790,vat:317310,broker:"운서합동",brokerFee:0,shipper:"DHL",shipFee:1454605,sub:368100,total:1822705,qty:15,unit:121514,month:"2026-03",item:"Filter+Fan (15EA)"},
-  {no:24,po:"CPO698",vendor:"Christie",terms:"Net 45 days",type:"부품(렌즈)",poDate:"2026-03-25",remitDate:"-",usd:4290,rate:0,krw:0,tariff:524320,vat:707830,broker:"운서합동",brokerFee:0,shipper:"DHL",shipFee:0,sub:1232150,total:1232150,qty:2,unit:616075,month:"2026-04",item:"Lens 1.62-2.7 (2EA)"},
-  {no:43,po:"SX3000수리",vendor:"GDC",terms:"-",type:"수리반환",poDate:"-",remitDate:"-",usd:400,rate:0,krw:0,tariff:0,vat:67750,broker:"운서합동",brokerFee:0,shipper:"DHL",shipFee:0,sub:67750,total:67750,qty:5,unit:13550,month:"2026-04",item:"Display Card (수리반환 5PCS)"},
+  {no:1,po:"CPO678-1",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2025-11-04",remitDate:"2025-12-16",usd:139083,rate:0,krw:0,tariff:1682291,vat:20784342,broker:"다민관세사",brokerFee:149729,shipper:"진로직스",shipFee:2470670,sub:0,total:0,qty:1,unit:0,month:"2025-12",declDate:"2025-12-11",declNo:"1219925801471M"},
+  {no:2,po:"GPO451",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2025-11-21",remitDate:"2025-12-29",usd:9060,rate:0,krw:0,tariff:0,vat:1352610,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:0,sub:0,total:0,qty:1,unit:0,month:"2025-12",declDate:"2025-12-05",declNo:"2317625939353M"},
+  {no:3,po:"CPO679",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2025-11-26",remitDate:"2025-12-16",usd:4474,rate:0,krw:0,tariff:560630,vat:756850,broker:"아인관세사",brokerFee:36000,shipper:"진로직스",shipFee:590823,sub:0,total:0,qty:1,unit:0,month:"2025-11",declDate:"2025-11-28",declNo:"1421425100697M"},
+  {no:4,po:"CPO684",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2025-12-02",remitDate:"-",usd:362.25,rate:0,krw:0,tariff:0,vat:0,broker:"-",brokerFee:0,shipper:"-",shipFee:0,sub:0,total:0,qty:1,unit:0,month:"2025-12",declDate:"-",declNo:"-"},
+  {no:5,po:"CPO680",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2025-12-04",remitDate:"2026-01-13",usd:252,rate:0,krw:0,tariff:29879,vat:37658,broker:"다민관세사",brokerFee:271,shipper:"진로직스",shipFee:4477,sub:0,total:0,qty:1,unit:0,month:"2025-12",declDate:"2025-12-11",declNo:"1219925801471M"},
+  {no:6,po:"GPO460",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2025-12-16",remitDate:"2026-01-21",usd:2710,rate:0,krw:0,tariff:0,vat:399770,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:0,sub:0,total:0,qty:1,unit:0,month:"2026-01",declDate:"2026-01-01",declNo:"2317626006259M"},
+  {no:7,po:"LPO001",vendor:"Lemon",terms:"TT Advance",type:"장비",poDate:"2025-12-16",remitDate:"2026-01-30",usd:5056.8,rate:0,krw:0,tariff:240450,vat:831820,broker:"아인관세사",brokerFee:36000,shipper:"진로직스",shipFee:581438,sub:0,total:0,qty:6,unit:0,month:"2026-03",declDate:"2026-03-09",declNo:"1421426100183M"},
+  {no:8,po:"CPO678-2",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2025-12-18",remitDate:"2026-03-06",usd:137850,rate:0,krw:0,tariff:0,vat:19976300,broker:"조운관세사",brokerFee:263400,shipper:"진로직스",shipFee:2385057,sub:0,total:0,qty:3,unit:0,month:"2026-01",declDate:"2026-01-08",declNo:"1400826101004M"},
+  {no:9,po:"CPO682",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2025-12-19",remitDate:"2026-02-04",usd:20174,rate:0,krw:0,tariff:0,vat:3156262,broker:"아인관세사",brokerFee:92978,shipper:"진로직스",shipFee:1864148,sub:0,total:0,qty:1,unit:0,month:"2025-12",declDate:"2025-12-24",declNo:"1400825101450M"},
+  {no:10,po:"CPO683",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2025-12-19",remitDate:"2026-02-04",usd:4620,rate:0,krw:0,tariff:84170,vat:722808,broker:"아인관세사",brokerFee:14422,shipper:"진로직스",shipFee:426904,sub:0,total:0,qty:1,unit:0,month:"2025-12",declDate:"2025-12-24",declNo:"1400825101450M"},
+  {no:11,po:"MPO66",vendor:"MAG",terms:"T/T",type:"장비",poDate:"2025-12-20",remitDate:"2026-01-21",usd:9626.35,rate:0,krw:0,tariff:0,vat:1704871,broker:"아인관세사",brokerFee:93591,shipper:"진로직스",shipFee:2690702,sub:0,total:0,qty:13,unit:0,month:"2026-02",declDate:"2026-02-19",declNo:"1421426100153M"},
+  {no:12,po:"MPO65",vendor:"MAG",terms:"T/T",type:"장비",poDate:"2025-12-20",remitDate:"2025-12-16",usd:4936,rate:0,krw:0,tariff:0,vat:874189,broker:"아인관세사",brokerFee:47990,shipper:"진로직스",shipFee:1379682,sub:0,total:0,qty:1,unit:0,month:"2026-02",declDate:"2026-02-19",declNo:"1421426100153M"},
+  {no:13,po:"CPO689",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2026-01-03",remitDate:"2026-02-19",usd:2745,rate:0,krw:0,tariff:20430,vat:409790,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:162080,sub:0,total:0,qty:1,unit:0,month:"2026-01",declDate:"2026-01-20",declNo:"2317626055855M"},
+  {no:14,po:"GPO467",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2026-01-07",remitDate:"2026-04-01",usd:1700,rate:0,krw:0,tariff:0,vat:250080,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:136050,sub:0,total:0,qty:20,unit:0,month:"2026-02",declDate:"2026-02-03",declNo:"2317626105219M"},
+  {no:15,po:"CPO692-1",vendor:"Christie",terms:"Net 45 days",type:"부품(렌즈)",poDate:"2026-01-13",remitDate:"-",usd:11000,rate:0,krw:0,tariff:1297810,vat:1752040,broker:"-",brokerFee:0,shipper:"DHL",shipFee:1553086,sub:0,total:0,qty:2,unit:0,month:"2026-02",declDate:"2026-02-11",declNo:"2235626138790M"},
+  {no:16,po:"CPO692-2",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2026-01-13",remitDate:"-",usd:286580,rate:0,krw:0,tariff:3450410,vat:42329590,broker:"조운관세사",brokerFee:250000,shipper:"진로직스",shipFee:2649525,sub:0,total:0,qty:28,unit:0,month:"2026-02",declDate:"2026-02-20",declNo:"1400826101051M"},
+  {no:17,po:"CPO690",vendor:"Christie",terms:"Net 45 days",type:"부품",poDate:"2026-01-28",remitDate:"2026-04-01",usd:9740,rate:0,krw:0,tariff:0,vat:1493440,broker:"-",brokerFee:0,shipper:"DHL",shipFee:1561040,sub:0,total:0,qty:20,unit:0,month:"2026-01",declDate:"2026-01-31",declNo:"2235626096487M"},
+  {no:18,po:"CPO693",vendor:"Christie",terms:"Net 45 days",type:"장비",poDate:"2026-02-18",remitDate:"-",usd:35674,rate:0,krw:0,tariff:0,vat:0,broker:"-",brokerFee:0,shipper:"-",shipFee:0,sub:0,total:0,qty:1,unit:0,month:"2026-02",declDate:"-",declNo:"-"},
+  {no:19,po:"GPO468-1",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2026-02-27",remitDate:"-",usd:36190,rate:0,krw:0,tariff:0,vat:5395574,broker:"조운관세사",brokerFee:137864,shipper:"진로직스",shipFee:1232133,sub:0,total:0,qty:10,unit:0,month:"2026-03",declDate:"2026-03-14",declNo:"1400826101085M"},
+  {no:20,po:"GPO472",vendor:"GDC",terms:"Net 30 days",type:"부품",poDate:"2026-03-07",remitDate:"-",usd:180,rate:0,krw:0,tariff:0,vat:26836,broker:"조운관세사",brokerFee:536,shipper:"진로직스",shipFee:6128,sub:0,total:0,qty:1,unit:0,month:"2026-03",declDate:"2026-03-14",declNo:"1400826101085M"},
+  {no:21,po:"GPO468-2",vendor:"GDC",terms:"Net 30 days",type:"장비",poDate:"2026-03-07",remitDate:"-",usd:21280,rate:0,krw:0,tariff:0,vat:4747530,broker:"-",brokerFee:0,shipper:"Fedex",shipFee:904960,sub:0,total:0,qty:4,unit:0,month:"2026-03",declDate:"2026-03-23",declNo:"2317626258975M"},
+  {no:22,po:"CPO695-1",vendor:"Christie",terms:"Net 45 days",type:"부품(Fan)",poDate:"2026-03-17",remitDate:"-",usd:2058,rate:0,krw:0,tariff:0,vat:350480,broker:"운서합동",brokerFee:0,shipper:"DHL",shipFee:6264783,sub:0,total:0,qty:7,unit:0,month:"2026-03",declDate:"2026-03-24",declNo:"2235626283517M"},
+  {no:23,po:"CPO695-2",vendor:"Christie",terms:"Net 45 days",type:"부품(Filter)",poDate:"2026-03-17",remitDate:"-",usd:1977,rate:0,krw:0,tariff:50790,vat:317310,broker:"운서합동",brokerFee:0,shipper:"DHL",shipFee:1454605,sub:0,total:0,qty:15,unit:0,month:"2026-03",declDate:"2026-03-23",declNo:"2235626277307M"},
+  {no:24,po:"CPO698",vendor:"Christie",terms:"Net 45 days",type:"부품(렌즈)",poDate:"2026-03-25",remitDate:"",usd:4290,rate:0,krw:0,tariff:524320,vat:707830,broker:"운서합동",brokerFee:0,shipper:"DHL",shipFee:0,sub:0,total:0,qty:2,unit:0,month:"2026-04",declDate:"2026-04-10",declNo:"2235626346781M"},
+  {no:25,po:"SX3000수리",vendor:"GDC",terms:"-",type:"수리반환",poDate:"",remitDate:"",usd:400,rate:0,krw:0,tariff:0,vat:67750,broker:"운서합동",brokerFee:0,shipper:"DHL",shipFee:0,sub:0,total:0,qty:5,unit:0,month:"2026-04",declDate:"46125",declNo:"2235626351613M"}
 ];
 
 const licData = [
-  {no:25,po:"CPO667",vendor:"Christie",type:"워런티(EW)",usd:5673,item:"EW CP2220",remit:"2026-02-27",total:8180165,start:"2025-09-13",end:"2026-08-28",month:"2025-09"},
-  {no:26,po:"GPO458",vendor:"GDC",type:"라이센스",usd:350,item:"HFR License",remit:"2025-12-29",total:504867,start:"2025-12-01",end:"2026-11-30",month:"2025-12"},
-  {no:27,po:"CPO681",vendor:"Christie",type:"워런티(EW)",usd:26358,item:"EW CP2309/2315/2320-RGB",remit:"2026-02-11",total:38550845,start:"2025-12-22",end:"2026-12-21",month:"2025-12"},
-  {no:28,po:"GPO459",vendor:"GDC",type:"워런티(EW)",usd:450,item:"TMS-2000 EW",remit:"2026-01-21",total:669540,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
-  {no:29,po:"GPO461",vendor:"GDC",type:"워런티(EW)",usd:540,item:"TMS-1000 EW",remit:"2026-01-21",total:803448,start:"2025-11-01",end:"2026-10-30",month:"2025-11"},
-  {no:30,po:"CPO685",vendor:"Christie",type:"워런티(EW)",usd:136516,item:"EW 대량 (CP2208~CP4450)",remit:"2026-02-27",total:196848830,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
+  {no:25,po:"CPO667",vendor:"Christie",type:"워런티(EW)",usd:5673,item:"EW CP2220",remit:"2026-02-27",total:0,start:"2025-09-13",end:"2026-08-28",month:"2025-09"},
+  {no:26,po:"GPO458",vendor:"GDC",type:"라이센스",usd:350,item:"HFR License",remit:"2025-12-29",total:0,start:"2025-12-01",end:"2026-11-30",month:"2025-12"},
+  {no:27,po:"CPO681",vendor:"Christie",type:"워런티(EW)",usd:26358,item:"EW CP2309/2315/2320-RGB",remit:"2026-02-11",total:0,start:"2025-12-22",end:"2026-12-21",month:"2025-12"},
+  {no:28,po:"GPO459",vendor:"GDC",type:"워런티(EW)",usd:450,item:"TMS-2000 EW",remit:"2026-01-21",total:0,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
+  {no:29,po:"GPO461",vendor:"GDC",type:"워런티(EW)",usd:540,item:"TMS-1000 EW",remit:"2026-01-21",total:0,start:"2025-11-01",end:"2026-10-30",month:"2025-11"},
+  {no:30,po:"CPO685",vendor:"Christie",type:"워런티(EW)",usd:136516,item:"EW 대량 (CP2208~CP4450)",remit:"2026-02-27",total:0,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
   {no:31,po:"GPO465",vendor:"GDC",type:"워런티(EW)",usd:76054,item:"EW 대량 (SR/SX/TMS)",remit:"-",total:0,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
-  {no:32,po:"CPO686",vendor:"Christie",type:"워런티(EW)",usd:14793,item:"EW CP2315/CP4440-RGB",remit:"2026-02-19",total:21514671,start:"2026-01-30",end:"2027-01-29",month:"2026-01"},
+  {no:32,po:"CPO686",vendor:"Christie",type:"워런티(EW)",usd:14793,item:"EW CP2315/CP4440-RGB",remit:"2026-02-19",total:0,start:"2026-01-30",end:"2027-01-29",month:"2026-01"},
   {no:33,po:"CPO687",vendor:"Christie",type:"워런티(EW)",usd:26656,item:"EW (홀딩)",remit:"-",total:0,start:"-",end:"-",month:"2026-01"},
-  {no:34,po:"GPO462",vendor:"GDC",type:"라이센스",usd:1440,item:"TMS-2000 License",remit:"2026-02-04",total:2099027,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
-  {no:35,po:"GPO463",vendor:"GDC",type:"워런티(EW)",usd:4489,item:"SX/SR EW (CGV/Lotte)",remit:"2026-02-04",total:6543427,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
-  {no:36,po:"GPO464",vendor:"GDC",type:"워런티(EW)",usd:5670.57,item:"SR-1000/SX-3000 EW",remit:"2026-02-04",total:8265753,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
-  {no:37,po:"CPO691",vendor:"Christie",type:"워런티(EW)",usd:24614,item:"EW (메가박스 외)",remit:"2026-04-01",total:37097564,start:"2026-03-01",end:"2027-02-28",month:"2026-03"},
-  {no:38,po:"GPO469",vendor:"GDC",type:"워런티(EW)",usd:3993.05,item:"SR/SX EW (하남미사 외)",remit:"2026-04-01",total:6044457,start:"2026-01-01",end:"2027-02-22",month:"2026-01"},
-  {no:39,po:"GPO470",vendor:"GDC",type:"라이센스",usd:360,item:"TMS-1000 License",remit:"2026-04-01",total:544947,start:"2026-03-01",end:"2027-02-28",month:"2026-03"},
-  {no:40,po:"GPO471",vendor:"GDC",type:"라이센스",usd:500,item:"Dolby Atmos License",remit:"2026-04-01",total:756872,start:"-",end:"-",month:"2026-03"},
+  {no:34,po:"GPO462",vendor:"GDC",type:"라이센스",usd:1440,item:"TMS-2000 License",remit:"2026-02-04",total:0,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
+  {no:35,po:"GPO463",vendor:"GDC",type:"워런티(EW)",usd:4489,item:"SX/SR EW (CGV/Lotte)",remit:"2026-02-04",total:0,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
+  {no:36,po:"GPO464",vendor:"GDC",type:"워런티(EW)",usd:5670.57,item:"SR-1000/SX-3000 EW",remit:"2026-02-04",total:0,start:"2026-01-01",end:"2026-12-31",month:"2026-01"},
+  {no:37,po:"CPO691",vendor:"Christie",type:"워런티(EW)",usd:24614,item:"EW (메가박스 외)",remit:"2026-04-01",total:0,start:"2026-03-01",end:"2027-02-28",month:"2026-03"},
+  {no:38,po:"GPO469",vendor:"GDC",type:"워런티(EW)",usd:3993.05,item:"SR/SX EW (하남미사 외)",remit:"2026-04-01",total:0,start:"2026-01-01",end:"2027-02-22",month:"2026-01"},
+  {no:39,po:"GPO470",vendor:"GDC",type:"라이센스",usd:360,item:"TMS-1000 License",remit:"2026-04-01",total:0,start:"2026-03-01",end:"2027-02-28",month:"2026-03"},
+  {no:40,po:"GPO471",vendor:"GDC",type:"라이센스",usd:500,item:"Dolby Atmos License",remit:"2026-04-01",total:0,start:"-",end:"-",month:"2026-03"},
   {no:41,po:"CPO694",vendor:"Christie",type:"워런티(EW)",usd:17404,item:"EW (CGV 동백 외)",remit:"-",total:0,start:"2026-04-01",end:"2027-03-31",month:"2026-04"},
-  {no:42,po:"CPO688",vendor:"Christie",type:"Inspection",usd:4180,item:"Inspection fee",remit:"-",total:0,start:"-",end:"-",month:"2026-01"},
+  {no:42,po:"CPO688",vendor:"Christie",type:"Inspection",usd:4180,item:"Inspection fee",remit:"-",total:0,start:"-",end:"-",month:"2026-01"}
 ];
 
 const remitData = [
@@ -94,8 +94,7 @@ const remitData = [
   {no:22,date:"2026.03.06",to:"Christie",ref:"CPO678-2",usd:137850,rate:1477.6,fee:12500,wire:8000,krw:203737212},
   {no:23,date:"2026.04.01",to:"Christie",ref:"CPO690,691",usd:34354,rate:1505.7,fee:12500,wire:8000,krw:51777431},
   {no:24,date:"2026.04.01",to:"GDC",ref:"GPO469,467,470,471",usd:6553.05,rate:1506.4,fee:10000,wire:8000,krw:9919642},
-  {no:25,date:"2026.04.01",to:"GDC(베트남)",ref:"SORGD-001 Vietnam",usd:22509.68,rate:1494.4,fee:0,wire:0,krw:0},
-  {no:26,date:"2026.04.14",to:"GDC",ref:"GPO468-1, 472, 468-2",usd:57650,rate:1481.9,fee:12500,wire:8000,krw:85481673},
+  {no:26,date:"2026.04.14",to:"GDC",ref:"GPO468-1, 472, 468-2",usd:57650,rate:1481.9,fee:12500,wire:8000,krw:85481673}
 ];
 
 const lcData = [
@@ -142,7 +141,8 @@ const fxData = [
   {s:"2026-03-22",e:"2026-03-28",r:1492.56},
   {s:"2026-03-29",e:"2026-04-04",r:1500.92},
   {s:"2026-04-05",e:"2026-04-11",r:1515.72},
-  {s:"2026-04-12",e:"2026-04-18",r:1495.76},
+  {s:"2026-04-12",e:"2026-04-20",r:1495.76},
+  {s:"2026-04-20",e:"2026-04-25",r:1479.34}
 ];
 
 // ── Components ──
@@ -273,7 +273,7 @@ function App() {
           React.createElement('a',{href:'https://docs.google.com/spreadsheets/d/1Nxh8QbxTghlqNC-Rsk6WkUpFCE1ETMoPbUHPze0SitE/edit?gid=956759540#gid=956759540',target:'_blank',rel:'noopener noreferrer',style:{display:'inline-flex',alignItems:'center',gap:4,padding:'4px 10px',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:6,fontSize:12,fontWeight:600,color:'#059669',textDecoration:'none'}},
             '📊 원본 시트')
         ),
-        React.createElement('p',{style:{fontSize:13,color:'#6b7280',margin:'4px 0 0'}},'기준일: 2026-04-18 | 회계처리용 통합 데이터')
+        React.createElement('p',{style:{fontSize:13,color:'#6b7280',margin:'4px 0 0'}},'기준일: 2026-04-20 | 회계처리용 통합 데이터')
       ),
       // Tabs
       React.createElement('div',{style:{display:'flex',gap:0,marginBottom:20,borderBottom:'2px solid #e5e7eb',width:'100%'}},
@@ -410,7 +410,7 @@ function App() {
       tab==='lc' && React.createElement(React.Fragment,null,
         // 요약 카드
         React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:12,marginBottom:20}},
-          React.createElement(Card,{label:'미상환 L/C 합계',value:fmtU(lcData.reduce((s,d)=>s+d.usd,0)),sub:'기준일: 2026-04-18',color:'#dc2626'}),
+          React.createElement(Card,{label:'미상환 L/C 합계',value:fmtU(lcData.reduce((s,d)=>s+d.usd,0)),sub:'기준일: 2026-04-20',color:'#dc2626'}),
           React.createElement(Card,{label:'총 L/C 한도',value:fmtU(lcBankData.reduce((s,d)=>s+d.limit,0)),sub:'신한+하나+우리',color:'#3b82f6'}),
           React.createElement(Card,{label:'잔여 가용 한도',value:fmtU(lcBankData.reduce((s,d)=>s+d.avail,0)),sub:'활성 은행 기준',color:'#059669'}),
           React.createElement(Card,{label:'가장 빠른 상환',value:'D-'+Math.min(...lcData.map(d=>d.dDay)),sub:lcData.reduce((a,b)=>a.dDay<b.dDay?a:b).po+' ('+lcData.reduce((a,b)=>a.dDay<b.dDay?a:b).due+')',color:'#f59e0b'})
@@ -470,7 +470,7 @@ function App() {
         })
       ),
 
-      React.createElement('div',{style:{marginTop:24,textAlign:'center',fontSize:11,color:'#9ca3af'}},'RNR 수입원가 산출표 | 기준일 2026-04-18 | 노란색 하이라이트 = 미확인 항목')
+      React.createElement('div',{style:{marginTop:24,textAlign:'center',fontSize:11,color:'#9ca3af'}},'RNR 수입원가 산출표 | 기준일 2026-04-20 | 노란색 하이라이트 = 미확인 항목')
     )
   );
 }
