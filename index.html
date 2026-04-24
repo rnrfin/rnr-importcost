@@ -186,12 +186,12 @@ function Table({cols, data, hl}) {
 }
 
 function FxChart() {
-  const mn = Math.min(...fxData.map(d=>d.r))-10;
-  const mx = Math.max(...fxData.map(d=>d.r))+10;
+  const mn = Math.min(...fxData.map(d=>d.rate))-10;
+  const mx = Math.max(...fxData.map(d=>d.rate))+10;
   const rng = mx-mn;
   const w=700,h=200,pL=60,pR=90,pT=10,pB=30;
   const cW=w-pL-pR, cH=h-pT-pB;
-  const pts = fxData.map((d,i)=>({x:pL+(i/(fxData.length-1))*cW, y:pT+cH-((d.r-mn)/rng)*cH, ...d}));
+  const pts = fxData.map((d,i)=>({x:pL+(i/(fxData.length-1))*cW, y:pT+cH-((d.rate-mn)/rng)*cH, ...d}));
   const pathD = pts.map((p,i)=>`${i===0?'M':'L'} ${p.x} ${p.y}`).join(' ');
 
   const gridLines = [0,0.25,0.5,0.75,1].map(p=>{
@@ -203,7 +203,7 @@ function FxChart() {
   });
 
   const labels = pts.filter((_,i)=>i%4===0||i===pts.length-1).map((p,i)=>
-    React.createElement('text',{key:i,x:p.x,y:h-5,textAnchor:'middle',fontSize:9,fill:'#9ca3af'},p.s.slice(5))
+    React.createElement('text',{key:i,x:p.x,y:h-5,textAnchor:'middle',fontSize:9,fill:'#9ca3af'},p.start.slice(5))
   );
 
   return React.createElement('div',{style:{background:'#fff',borderRadius:10,padding:20,boxShadow:'0 1px 3px rgba(0,0,0,0.08)',marginBottom:24}},
@@ -214,7 +214,7 @@ function FxChart() {
       ...pts.map((p,i)=>React.createElement('circle',{key:i,cx:p.x,cy:p.y,r:2.5,fill:'#3b82f6'})),
       ...labels,
       React.createElement('circle',{cx:pts[pts.length-1].x,cy:pts[pts.length-1].y,r:4,fill:'#dc2626'}),
-      React.createElement('text',{x:pts[pts.length-1].x+8,y:pts[pts.length-1].y+4,textAnchor:'start',fontSize:11,fill:'#dc2626',fontWeight:'bold'},fxData[fxData.length-1].r)
+      React.createElement('text',{x:pts[pts.length-1].x+8,y:pts[pts.length-1].y+4,textAnchor:'start',fontSize:11,fill:'#dc2626',fontWeight:'bold'},fxData[fxData.length-1].rate)
     )
   );
 }
@@ -297,7 +297,7 @@ function App() {
           React.createElement(Card,{label:'라이센스/워런티 합계',value:fmt(lcTotal)+'원',sub:fmtU(licData2026.reduce((s,d)=>s+d.usd,0)),color:'#8b5cf6'}),
           React.createElement(Card,{label:'총 합계',value:fmt(grand)+'원',sub:fmtU(poData2026.reduce((s,d)=>s+d.usd,0)+licData2026.reduce((s,d)=>s+d.usd,0)),color:'#059669'}),
           React.createElement(Card,{label:'미상환 L/C',value:fmtU(lcData.reduce((s,d)=>s+d.usd,0)),sub:'D-Day: '+lcData[0].dDay+'일 / '+lcData[1].dDay+'일',color:'#dc2626'}),
-          React.createElement(Card,{label:'최신 고시환율',value:'₩'+Number(fxData[fxData.length-1].r).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}),sub:fxData[fxData.length-1].s+' ~ '+fxData[fxData.length-1].e,color:'#f59e0b'})
+          React.createElement(Card,{label:'최신 고시환율',value:'₩'+Number(fxData[fxData.length-1].rate).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}),sub:fxData[fxData.length-1].s+' ~ '+fxData[fxData.length-1].e,color:'#f59e0b'})
         ),
         React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}},
           React.createElement(VendorChart),
@@ -468,11 +468,11 @@ function App() {
         React.createElement(FxChart),
         React.createElement(Table,{
           cols:[
-            {k:'s',l:'적용 시작일'},{k:'e',l:'적용 종료일'},
-            {l:'수입환율 (₩/USD)',a:'right',r:r=>React.createElement('span',{style:{fontWeight:600}},Number(r.r).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}))},
+            {k:'start',l:'적용 시작일'},{k:'end',l:'적용 종료일'},
+            {l:'수입환율 (₩/USD)',a:'right',r:r=>React.createElement('span',{style:{fontWeight:600}},Number(r.rate).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}))},
             {l:'변동',a:'right',r:r=>{
               const idx=fxData.indexOf(r); if(idx===0) return '-';
-              const d=r.r-fxData[idx-1].r;
+              const d=r.rate-fxData[idx-1].rate;
               return React.createElement('span',{style:{color:d>0?'#dc2626':d<0?'#059669':'#6b7280',fontWeight:600}},(d>0?'+':'')+d.toFixed(2));
             }}
           ],
