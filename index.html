@@ -297,7 +297,7 @@ function App() {
           React.createElement(Card,{label:'라이센스/워런티 합계',value:fmt(lcTotal)+'원',sub:fmtU(licData2026.reduce((s,d)=>s+d.usd,0)),color:'#8b5cf6'}),
           React.createElement(Card,{label:'총 합계',value:fmt(grand)+'원',sub:fmtU(poData2026.reduce((s,d)=>s+d.usd,0)+licData2026.reduce((s,d)=>s+d.usd,0)),color:'#059669'}),
           React.createElement(Card,{label:'미상환 L/C',value:fmtU(lcData.reduce((s,d)=>s+d.usd,0)),sub:'D-Day: '+lcData[0].dDay+'일 / '+lcData[1].dDay+'일',color:'#dc2626'}),
-          React.createElement(Card,{label:'최신 고시환율',value:'₩'+Number(fxData[fxData.length-1].rate).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}),sub:fxData[fxData.length-1].s+' ~ '+fxData[fxData.length-1].e,color:'#f59e0b'})
+          React.createElement(Card,{label:'최신 고시환율',value:'₩'+Number(fxData[fxData.length-1].rate).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}),sub:fxData[fxData.length-1].start+' ~ '+fxData[fxData.length-1].end,color:'#f59e0b'})
         ),
         React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}},
           React.createElement(VendorChart),
