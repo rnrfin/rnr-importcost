@@ -222,7 +222,12 @@ function FxChart() {
     );
   });
 
-  const labels = pts.filter((_,i)=>i%4===0||i===pts.length-1).map((p,i)=>
+  const lastIdx = pts.length-1;
+  const labels = pts.filter((_,i)=>{
+    if (i===lastIdx) return true;
+    if (i%4!==0) return false;
+    return (lastIdx - i) >= 3;
+  }).map((p,i)=>
     React.createElement('text',{key:i,x:p.x,y:h-5,textAnchor:'middle',fontSize:9,fill:'#9ca3af'},p.start.slice(5))
   );
 
