@@ -4,12 +4,84 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RNR 2026년 수입원가 산출표</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif; background: #f8fafc; }
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --border:#e7e9ee; --line:#f0f2f5;
+  --text:#171a20; --text2:#586174; --text3:#98a1b2;
+  --blue:#2563eb; --blue-soft:#eff4ff;
+  --violet:#7c3aed; --violet-soft:#f5f1fe;
+  --green:#059669; --green-soft:#ecfdf5;
+  --red:#dc2626; --red-soft:#fef2f2;
+  --amber:#d97706; --amber-soft:#fffbeb;
+}
+body{font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;letter-spacing:-0.01em}
+a{text-decoration:none}
+.wrap{max-width:1440px;margin:0 auto;padding:26px 26px 44px}
+@media(max-width:640px){.wrap{padding:16px 12px 32px}}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+h1{font-size:20px;font-weight:800;letter-spacing:-0.02em}
+.subtitle{font-size:12.5px;color:var(--text2);margin-top:2px}
+.linkbtns{display:flex;gap:8px;flex-wrap:wrap}
+.lbtn{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:9px;font-size:12px;font-weight:600;border:1px solid var(--border);background:#fff;color:var(--text2);transition:border-color .15s,color .15s}
+.lbtn:hover{border-color:#bcc4d2;color:var(--text)}
+.lbtn svg{flex:none}
+.tabs{display:flex;gap:4px;background:#e9ebf0;padding:4px;border-radius:12px;margin-bottom:20px;overflow-x:auto}
+.tab{flex:1;padding:9px 14px;border:none;background:transparent;border-radius:9px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;white-space:nowrap;font-family:inherit;transition:color .15s}
+.tab.active{background:#fff;color:var(--text);box-shadow:0 1px 4px rgba(23,26,32,.09);font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(216px,1fr));gap:13px;margin-bottom:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px}
+.card .ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.card .lb{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px}
+.card .vl{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .sb{font-size:11.5px;color:var(--text3);margin-top:4px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.ptitle{font-size:14px;font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+@media(max-width:980px){.grid2{grid-template-columns:1fr}}
+.tblwrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px;background:#fff;max-height:72vh;overflow-y:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
+th{position:sticky;top:0;z-index:1;background:#f8f9fb;padding:10px 12px;font-size:11px;font-weight:600;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap;text-align:left}
+td{padding:8px 12px;border-bottom:1px solid var(--line);white-space:nowrap;color:#363c49}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#f6f9ff}
+tr.hl td{background:var(--amber-soft)}
+tr.hl:hover td{background:#fef3c7}
+.num{font-variant-numeric:tabular-nums}
+.filters{display:flex;gap:9px;margin-bottom:14px;align-items:center;flex-wrap:wrap}
+select{padding:8px 12px;border-radius:9px;border:1px solid var(--border);font-size:12.5px;background:#fff;color:var(--text);font-family:inherit;outline:none;cursor:pointer}
+select:focus{border-color:var(--blue)}
+.sumbar{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:9px;font-size:12px;font-weight:500;background:#fff;border:1px solid var(--border);color:var(--text2)}
+.chip b{color:var(--text);font-variant-numeric:tabular-nums;font-weight:700}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-weight:700;font-size:11px}
+.pred{background:var(--red-soft);color:var(--red)}
+.pamber{background:var(--amber-soft);color:var(--amber)}
+.pgreen{background:var(--green-soft);color:var(--green)}
+.pgray{background:#f1f3f6;color:var(--text3)}
+.legend{display:flex;gap:13px;font-size:11.5px;color:var(--text2);align-items:center;flex-wrap:wrap}
+.dot{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:-1px}
+.vrow{margin-bottom:13px}
+.vrow:last-child{margin-bottom:2px}
+.vmeta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;gap:10px}
+.vname{font-size:12.5px;font-weight:600}
+.vval{font-size:12px;color:var(--text2);white-space:nowrap}
+.vval b{font-variant-numeric:tabular-nums;color:var(--text);font-weight:700}
+.vval em{font-style:normal;color:var(--text3);margin-left:7px;font-size:11px;font-variant-numeric:tabular-nums}
+.vbar{display:flex;height:14px;border-radius:5px;overflow:hidden;background:#f0f2f5}
+.mbar{display:flex;height:14px;border-radius:4px;overflow:hidden;background:#f0f2f5}
+.sechead{font-size:13px;font-weight:700;margin:20px 0 9px}
+.sechead:first-child{margin-top:0}
+.srcnote{margin-top:11px;font-size:11px;color:var(--text3)}
+.fxdelta{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.foot{margin-top:26px;text-align:center;font-size:11.5px;color:var(--text3)}
 </style>
 </head>
 <body>
@@ -134,7 +206,7 @@ const lcData = [
 const lcBankData = [
   {bank:"신한은행",limit:500000,open:412338,avail:87662,active:"활성",note:"LC 현재 활성 사용 중"},
   {bank:"하나은행",limit:200000,open:0,avail:200000,active:"활성",note:"현재 미사용"},
-  {bank:"우리은행",limit:700000,open:0,avail:700000,active:"비활성",note:"신한·하나만 활성 (Slack 2026-03-16)"},
+  {bank:"우리은행",limit:700000,open:0,avail:700000,active:"비활성",note:"신한, 하나만 활성 (Slack 2026-03-16)"},
 ];
 
 const lcCustomsData = [
@@ -181,344 +253,349 @@ const fxData = [
   {start:"2026-05-31",end:"2026-06-06",rate:1507.15}
 ];
 
-// ── Components ──
-function Card({label, value, sub, color}) {
-  return React.createElement('div', {style:{background:'#fff',borderRadius:10,padding:'16px 18px',borderLeft:`4px solid ${color}`,boxShadow:'0 1px 3px rgba(0,0,0,0.08)'}},
-    React.createElement('div',{style:{fontSize:12,color:'#6b7280',marginBottom:4}},label),
-    React.createElement('div',{style:{fontSize:16,fontWeight:700,color:'#111827',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}},value),
-    React.createElement('div',{style:{fontSize:11,color:'#9ca3af',marginTop:2}},sub)
-  );
+// ==== Icons ====
+function Ic({d,color}){
+  return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={d}/></svg>;
+}
+const PATHS = {
+  cube:"M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9",
+  shield:"M9 12.75L11.25 15 15 9.75M21 9.75c0 5.592-3.824 10.29-9 11.622-5.176-1.332-9-6.03-9-11.622 0-1.31.21-2.571.598-3.751A11.959 11.959 0 0012 2.714a11.959 11.959 0 008.402 3.285c.388 1.18.598 2.44.598 3.751z",
+  wallet:"M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3",
+  clock:"M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z",
+  trend:"M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941",
+  sheet:"M3.75 3.75h16.5v16.5H3.75zM3.75 9h16.5M9 3.75v16.5",
+  download:"M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+};
+const TONES = {
+  blue:{bg:'var(--blue-soft)',fg:'var(--blue)'},
+  violet:{bg:'var(--violet-soft)',fg:'var(--violet)'},
+  green:{bg:'var(--green-soft)',fg:'var(--green)'},
+  red:{bg:'var(--red-soft)',fg:'var(--red)'},
+  amber:{bg:'var(--amber-soft)',fg:'var(--amber)'}
+};
+const dday = (due) => Math.ceil((new Date(due) - new Date())/86400000);
+const fmtD = (d) => d>=0 ? 'D-'+d : '경과 '+Math.abs(d)+'일';
+
+// ==== Building blocks ====
+function Card({icon,label,value,sub,tone}){
+  const t = TONES[tone];
+  return <div className="card">
+    <div className="ic" style={{background:t.bg}}><Ic d={PATHS[icon]} color={t.fg}/></div>
+    <div className="lb">{label}</div>
+    <div className="vl">{value}</div>
+    <div className="sb">{sub}</div>
+  </div>;
 }
 
-function Table({cols, data, hl}) {
-  return React.createElement('div',{style:{overflowX:'auto',borderRadius:8,border:'1px solid #e5e7eb'}},
-    React.createElement('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:12}},
-      React.createElement('thead',null,
-        React.createElement('tr',null, cols.map((c,i)=>
-          React.createElement('th',{key:i,style:{padding:'8px 10px',background:'#f3f4f6',borderBottom:'2px solid #d1d5db',textAlign:c.a||'left',whiteSpace:'nowrap',fontWeight:600,color:'#374151',position:'sticky',top:0}},c.l)
-        ))
-      ),
-      React.createElement('tbody',null, data.map((row,ri)=>{
-        const isHl = hl ? hl(row) : false;
-        return React.createElement('tr',{key:ri,style:{background:isHl?'#fef9c3':ri%2===0?'#fff':'#f9fafb'}},
-          cols.map((c,ci)=>
-            React.createElement('td',{key:ci,style:{padding:'6px 10px',borderBottom:'1px solid #e5e7eb',textAlign:c.a||'left',whiteSpace:'nowrap',color:'#374151',fontVariantNumeric:c.a==='right'?'tabular-nums':'normal'}},
-              c.r ? c.r(row) : row[c.k])
-          )
-        );
-      }))
-    )
-  );
+function Panel({title,right,children,style}){
+  return <div className="panel" style={style}>
+    {(title||right) && <div className="phead"><div className="ptitle">{title}</div>{right}</div>}
+    {children}
+  </div>;
 }
 
-function FxChart() {
-  const mn = Math.min(...fxData.map(d=>d.rate))-10;
-  const mx = Math.max(...fxData.map(d=>d.rate))+10;
-  const rng = mx-mn;
-  const w=700,h=200,pL=60,pR=90,pT=10,pB=30;
+function Table({cols,data,hl}){
+  return <div className="tblwrap">
+    <table>
+      <thead><tr>{cols.map((c,i)=><th key={i} style={{textAlign:c.a||'left'}}>{c.l}</th>)}</tr></thead>
+      <tbody>{data.map((row,ri)=>
+        <tr key={ri} className={hl&&hl(row)?'hl':''}>
+          {cols.map((c,ci)=><td key={ci} className={c.a==='right'?'num':''} style={{textAlign:c.a||'left'}}>{c.r?c.r(row):row[c.k]}</td>)}
+        </tr>)}
+      </tbody>
+    </table>
+  </div>;
+}
+
+// ==== Charts ====
+function FxChart({tall}){
+  const rates = fxData.map(d=>d.rate);
+  const mn = Math.min(...rates)-12, mx = Math.max(...rates)+12, rng = mx-mn;
+  const w=720, h=tall?250:228, pL=50, pR=88, pT=16, pB=26;
   const cW=w-pL-pR, cH=h-pT-pB;
   const pts = fxData.map((d,i)=>({x:pL+(i/(fxData.length-1))*cW, y:pT+cH-((d.rate-mn)/rng)*cH, ...d}));
-  const pathD = pts.map((p,i)=>`${i===0?'M':'L'} ${p.x} ${p.y}`).join(' ');
-
-  const gridLines = [0,0.25,0.5,0.75,1].map(p=>{
-    const y=pT+cH*(1-p); const val=Math.round(mn+rng*p);
-    return React.createElement('g',{key:p},
-      React.createElement('line',{x1:pL,y1:y,x2:w-pR,y2:y,stroke:'#e5e7eb',strokeWidth:0.5}),
-      React.createElement('text',{x:pL-8,y:y+4,textAnchor:'end',fontSize:10,fill:'#9ca3af'},val)
-    );
-  });
-
+  const lineD = pts.map((p,i)=>(i===0?'M':'L')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
+  const areaD = lineD+' L'+pts[pts.length-1].x.toFixed(1)+' '+(pT+cH)+' L'+pts[0].x.toFixed(1)+' '+(pT+cH)+' Z';
+  const last = pts[pts.length-1];
+  const delta = rates[rates.length-1]-rates[rates.length-2];
   const lastIdx = pts.length-1;
-  const labels = pts.filter((_,i)=>{
-    if (i===lastIdx) return true;
-    if (i%4!==0) return false;
-    return (lastIdx - i) >= 3;
-  }).map((p,i)=>
-    React.createElement('text',{key:i,x:p.x,y:h-5,textAnchor:'middle',fontSize:9,fill:'#9ca3af'},p.start.slice(5))
-  );
-
-  return React.createElement('div',{style:{background:'#fff',borderRadius:10,padding:20,boxShadow:'0 1px 3px rgba(0,0,0,0.08)',marginBottom:24}},
-    React.createElement('div',{style:{fontSize:14,fontWeight:700,marginBottom:12,color:'#111827'}},'관세청 주간 고시환율 추이 (USD/KRW)'),
-    React.createElement('svg',{viewBox:`0 0 ${w} ${h}`,style:{width:'100%',maxWidth:700}},
-      ...gridLines,
-      React.createElement('path',{d:pathD,fill:'none',stroke:'#3b82f6',strokeWidth:2}),
-      ...pts.map((p,i)=>React.createElement('circle',{key:i,cx:p.x,cy:p.y,r:2.5,fill:'#3b82f6'})),
-      ...labels,
-      React.createElement('circle',{cx:pts[pts.length-1].x,cy:pts[pts.length-1].y,r:4,fill:'#dc2626'}),
-      React.createElement('text',{x:pts[pts.length-1].x+8,y:pts[pts.length-1].y+4,textAnchor:'start',fontSize:11,fill:'#dc2626',fontWeight:'bold'},fxData[fxData.length-1].rate)
-    )
-  );
+  return <Panel title="관세청 주간 고시환율 추이 (USD/KRW)"
+    right={<span className="fxdelta" style={{color:delta>0?'var(--red)':delta<0?'var(--green)':'var(--text3)'}}>{(delta>0?'+':'')+delta.toFixed(2)} 전주 대비</span>}>
+    <svg viewBox={'0 0 '+w+' '+h} style={{width:'100%'}}>
+      <defs>
+        <linearGradient id="fxg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2563eb" stopOpacity="0.16"/>
+          <stop offset="100%" stopColor="#2563eb" stopOpacity="0"/>
+        </linearGradient>
+      </defs>
+      {[0,0.25,0.5,0.75,1].map(p=>{
+        const y=pT+cH*(1-p), val=Math.round(mn+rng*p);
+        return <g key={p}>
+          <line x1={pL} y1={y} x2={w-pR} y2={y} stroke="#eceef2" strokeWidth="1" strokeDasharray={p===0?'0':'3 4'}/>
+          <text x={pL-8} y={y+3.5} textAnchor="end" fontSize="9.5" fill="#9aa3b2">{val.toLocaleString()}</text>
+        </g>;
+      })}
+      <path d={areaD} fill="url(#fxg)"/>
+      <path d={lineD} fill="none" stroke="#2563eb" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/>
+      {pts.filter((_,i)=>i===lastIdx||(i%4===0&&lastIdx-i>=3)).map((p,i)=>
+        <text key={i} x={p.x} y={h-5} textAnchor="middle" fontSize="9" fill="#9aa3b2">{p.start.slice(5)}</text>)}
+      <circle cx={last.x} cy={last.y} r="7" fill="#2563eb" opacity="0.15"/>
+      <circle cx={last.x} cy={last.y} r="3.5" fill="#fff" stroke="#2563eb" strokeWidth="2"/>
+      <text x={last.x+11} y={last.y+4} fontSize="11.5" fontWeight="700" fill="#1d4ed8">{last.rate.toLocaleString('ko-KR',{minimumFractionDigits:2})}</text>
+    </svg>
+  </Panel>;
 }
 
-function VendorChart() {
-  const vm={};
+function ChartLegend(){
+  return <div className="legend">
+    <span><span className="dot" style={{background:'var(--blue)'}}></span>장비/부품</span>
+    <span><span className="dot" style={{background:'var(--violet)'}}></span>라이센스/워런티</span>
+  </div>;
+}
+
+function VendorChart(){
+  const vm = {};
   [...poData.filter(d=>d.month&&d.month.startsWith('2026')),...licData.filter(d=>d.month&&d.month.startsWith('2026'))].forEach(d=>{
     if(!vm[d.vendor]) vm[d.vendor]={eq:0,lc:0};
-    if(d.type?.includes('워런티')||d.type?.includes('라이센스')||d.type==='Inspection') vm[d.vendor].lc+=d.total;
-    else vm[d.vendor].eq+=d.total;
+    if(d.type&&(d.type.includes('워런티')||d.type.includes('라이센스')||d.type==='Inspection')) vm[d.vendor].lc+=d.total; else vm[d.vendor].eq+=d.total;
   });
-  const vs=Object.entries(vm).sort((a,b)=>(b[1].eq+b[1].lc)-(a[1].eq+a[1].lc));
-  const mx=Math.max(...vs.map(([,v])=>v.eq+v.lc));
-
-  return React.createElement('div',{style:{background:'#fff',borderRadius:10,padding:20,boxShadow:'0 1px 3px rgba(0,0,0,0.08)',marginBottom:24}},
-    React.createElement('div',{style:{fontSize:14,fontWeight:700,marginBottom:16,color:'#111827'}},'업체별 수입원가 현황'),
-    ...vs.map(([name,val])=>{
-      const t=val.eq+val.lc;
-      return React.createElement('div',{key:name,style:{marginBottom:12}},
-        React.createElement('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:4}},
-          React.createElement('span',{style:{fontSize:13,fontWeight:600}},name),
-          React.createElement('span',{style:{fontSize:12,color:'#6b7280'}},fmt(t)+'원')
-        ),
-        React.createElement('div',{style:{display:'flex',height:20,borderRadius:4,overflow:'hidden',background:'#f3f4f6'}},
-          val.eq>0 && React.createElement('div',{style:{width:(val.eq/mx*100)+'%',background:'#3b82f6'}}),
-          val.lc>0 && React.createElement('div',{style:{width:(val.lc/mx*100)+'%',background:'#8b5cf6'}})
-        ),
-        React.createElement('div',{style:{display:'flex',gap:12,marginTop:2,fontSize:11,color:'#9ca3af'}},
-          val.eq>0 && React.createElement('span',null,'장비/부품: '+fmt(val.eq)),
-          val.lc>0 && React.createElement('span',null,'라이센스/워런티: '+fmt(val.lc))
-        )
-      );
-    }),
-    React.createElement('div',{style:{display:'flex',gap:16,marginTop:12,fontSize:11}},
-      React.createElement('span',null, React.createElement('span',{style:{display:'inline-block',width:10,height:10,background:'#3b82f6',borderRadius:2,marginRight:4}}),'장비/부품'),
-      React.createElement('span',null, React.createElement('span',{style:{display:'inline-block',width:10,height:10,background:'#8b5cf6',borderRadius:2,marginRight:4}}),'라이센스/워런티')
-    )
-  );
+  const vs = Object.entries(vm).sort((a,b)=>(b[1].eq+b[1].lc)-(a[1].eq+a[1].lc));
+  const mx = Math.max(...vs.map(([,v])=>v.eq+v.lc));
+  const grand = vs.reduce((s,[,v])=>s+v.eq+v.lc,0);
+  return <Panel title="업체별 수입원가 현황" right={<ChartLegend/>}>
+    {vs.map(([name,val])=>{
+      const t = val.eq+val.lc;
+      return <div key={name} className="vrow">
+        <div className="vmeta">
+          <span className="vname">{name}</span>
+          <span className="vval"><b>{fmt(t)}원</b><em>{grand?(t/grand*100).toFixed(1):0}%</em></span>
+        </div>
+        <div className="vbar">
+          {val.eq>0 && <div style={{width:(val.eq/mx*100)+'%',background:'var(--blue)'}}/>}
+          {val.lc>0 && <div style={{width:(val.lc/mx*100)+'%',background:'var(--violet)'}}/>}
+        </div>
+      </div>;
+    })}
+  </Panel>;
 }
 
+function MonthlyTable(){
+  const m = {};
+  poData.forEach(d=>{if(!m[d.month])m[d.month]={eq:0,lc:0};m[d.month].eq+=d.total;});
+  licData.forEach(d=>{if(!m[d.month])m[d.month]={eq:0,lc:0};m[d.month].lc+=d.total;});
+  const sorted = Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0]));
+  const mx = Math.max(...sorted.map(([,v])=>v.eq+v.lc));
+  const gEq = sorted.reduce((s,[,v])=>s+v.eq,0);
+  const gLc = sorted.reduce((s,[,v])=>s+v.lc,0);
+  return <Panel title="월별 수입원가 현황" right={<ChartLegend/>} style={{marginTop:13}}>
+    <table>
+      <thead><tr>
+        <th style={{width:80}}>귀속월</th><th></th>
+        <th style={{textAlign:'right',width:130}}>장비/부품</th>
+        <th style={{textAlign:'right',width:130}}>라이센스</th>
+        <th style={{textAlign:'right',width:140}}>합계</th>
+      </tr></thead>
+      <tbody>
+        {sorted.map(([mo,v])=>
+          <tr key={mo||'none'}>
+            <td style={{fontWeight:600,color:mo?'var(--text)':'var(--text3)'}}>{mo||'미귀속'}</td>
+            <td style={{minWidth:160}}>
+              <div className="mbar">
+                {v.eq>0 && <div style={{width:(v.eq/mx*100)+'%',background:'var(--blue)'}}/>}
+                {v.lc>0 && <div style={{width:(v.lc/mx*100)+'%',background:'var(--violet)'}}/>}
+              </div>
+            </td>
+            <td className="num" style={{textAlign:'right'}}>{v.eq?fmt(v.eq):'-'}</td>
+            <td className="num" style={{textAlign:'right'}}>{v.lc?fmt(v.lc):'-'}</td>
+            <td className="num" style={{textAlign:'right',fontWeight:700,color:'var(--text)'}}>{fmt(v.eq+v.lc)}원</td>
+          </tr>)}
+        <tr style={{background:'#f8f9fb'}}>
+          <td style={{fontWeight:800,borderTop:'1px solid var(--border)'}}>합계</td>
+          <td style={{borderTop:'1px solid var(--border)'}}></td>
+          <td className="num" style={{textAlign:'right',fontWeight:800,borderTop:'1px solid var(--border)'}}>{fmt(gEq)}</td>
+          <td className="num" style={{textAlign:'right',fontWeight:800,borderTop:'1px solid var(--border)'}}>{fmt(gLc)}</td>
+          <td className="num" style={{textAlign:'right',fontWeight:800,borderTop:'1px solid var(--border)'}}>{fmt(gEq+gLc)}원</td>
+        </tr>
+      </tbody>
+    </table>
+  </Panel>;
+}
+
+// ==== App ====
 const TABS = [{id:'overview',l:'개요'},{id:'po',l:'PO별 수입원가'},{id:'lic',l:'라이센스/워런티'},{id:'remit',l:'외화송금내역'},{id:'lc',l:'Usance L/C'},{id:'fx',l:'환율'}];
 
-function App() {
-  const [tab, setTab] = useState('overview');
-  const [vf, setVf] = useState('전체');
-  const [tf, setTf] = useState('전체');
-  const [mf, setMf] = useState('전체');
-  const poData2026 = useMemo(()=>poData,[]);
-  const licData2026 = useMemo(()=>licData,[]);
-  const remitData2026 = useMemo(()=>remitData,[]);
-  const vendors = useMemo(()=>['전체',...new Set(poData2026.map(d=>d.vendor))],[]);
-  const types = useMemo(()=>['전체',...new Set(poData2026.map(d=>d.type))],[]);
-  const months = useMemo(()=>['전체',...[...new Set(poData2026.map(d=>d.month))].sort()],[]);
-  const filtered = useMemo(()=>poData2026.filter(d=>(vf==='전체'||d.vendor===vf)&&(tf==='전체'||d.type===tf)&&(mf==='전체'||d.month===mf)),[vf,tf,mf]);
+function App(){
+  const [tab,setTab] = useState('overview');
+  const [vf,setVf] = useState('전체');
+  const [tf,setTf] = useState('전체');
+  const [mf,setMf] = useState('전체');
+  const vendors = useMemo(()=>['전체',...new Set(poData.map(d=>d.vendor))],[]);
+  const types = useMemo(()=>['전체',...new Set(poData.map(d=>d.type))],[]);
+  const months = useMemo(()=>['전체',...[...new Set(poData.map(d=>d.month))].sort()],[]);
+  const filtered = useMemo(()=>poData.filter(d=>(vf==='전체'||d.vendor===vf)&&(tf==='전체'||d.type===tf)&&(mf==='전체'||d.month===mf)),[vf,tf,mf]);
 
-  const eqTotal = poData2026.reduce((s,d)=>s+d.total,0);
-  const lcTotal = licData2026.filter(d=>d.type!=='Inspection').reduce((s,d)=>s+d.total,0);
+  const eqTotal = poData.reduce((s,d)=>s+d.total,0);
+  const lcTotal = licData.filter(d=>d.type!=='Inspection').reduce((s,d)=>s+d.total,0);
   const grand = eqTotal+lcTotal;
+  const lastFx = fxData[fxData.length-1];
+  const minLc = lcData.reduce((a,b)=>dday(a.due)<dday(b.due)?a:b);
 
-  return React.createElement('div',{style:{fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif",background:'#f8fafc',minHeight:'100vh',padding:24}},
-    React.createElement('div',{style:{maxWidth:1400,margin:'0 auto'}},
-      // Header
-      React.createElement('div',{style:{marginBottom:20}},
-        React.createElement('div',{style:{display:'flex',alignItems:'center',gap:12}},
-          React.createElement('h1',{style:{fontSize:22,fontWeight:800,color:'#111827',margin:0}},'RNR 2026년 수입원가 산출표'),
-          React.createElement('a',{href:'https://docs.google.com/spreadsheets/d/1Nxh8QbxTghlqNC-Rsk6WkUpFCE1ETMoPbUHPze0SitE/edit?gid=956759540#gid=956759540',target:'_blank',rel:'noopener noreferrer',style:{display:'inline-flex',alignItems:'center',gap:4,padding:'4px 10px',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:6,fontSize:12,fontWeight:600,color:'#059669',textDecoration:'none'}},
-            '📊 원본 시트'),
-          React.createElement('a',{href:'https://rnrfin.github.io/rnr-importcost/',target:'_blank',rel:'noopener noreferrer',style:{display:'inline-flex',alignItems:'center',gap:4,padding:'4px 10px',background:'#eff6ff',border:'1px solid #bfdbfe',borderRadius:6,fontSize:12,fontWeight:600,color:'#2563eb',textDecoration:'none'}},
-            '🔗 GitHub Pages')
-        ),
-        React.createElement('p',{style:{fontSize:13,color:'#6b7280',margin:'4px 0 0'}},'기준일: 2026-06-02 | 회계처리용 통합 데이터')
-      ),
-      // Tabs
-      React.createElement('div',{style:{display:'flex',gap:0,marginBottom:20,borderBottom:'2px solid #e5e7eb',width:'100%'}},
-        ...TABS.map(t=>React.createElement('button',{key:t.id,onClick:()=>setTab(t.id),style:{flex:1,padding:'8px 4px',fontSize:13,fontWeight:tab===t.id?700:500,color:tab===t.id?'#3b82f6':'#6b7280',background:'none',border:'none',borderBottom:tab===t.id?'2px solid #3b82f6':'2px solid transparent',cursor:'pointer',whiteSpace:'nowrap',marginBottom:-2,textAlign:'center'}},t.l))
-      ),
+  return <div className="wrap">
+    <div className="topbar">
+      <div className="brand">
+        <div className="logo">RNR</div>
+        <div>
+          <h1>2026년 수입원가 산출표</h1>
+          <div className="subtitle">기준일 2026-06-02 | 회계처리용 통합 데이터</div>
+        </div>
+      </div>
+      <div className="linkbtns">
+        <a className="lbtn" href="https://docs.google.com/spreadsheets/d/1Nxh8QbxTghlqNC-Rsk6WkUpFCE1ETMoPbUHPze0SitE/edit?gid=956759540#gid=956759540" target="_blank" rel="noopener noreferrer"><Ic d={PATHS.sheet} color="var(--green)"/>원본 시트</a>
+        <a className="lbtn" href="https://github.com/rnrfin/rnr-importcost/raw/main/latest.xlsx"><Ic d={PATHS.download} color="var(--blue)"/>Excel 다운로드</a>
+      </div>
+    </div>
 
-      // OVERVIEW
-      tab==='overview' && React.createElement(React.Fragment,null,
-        React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:12,marginBottom:24}},
-          React.createElement(Card,{label:'장비/부품 총 수입원가',value:fmt(eqTotal)+'원',sub:fmtU(poData2026.reduce((s,d)=>s+d.usd,0)),color:'#3b82f6'}),
-          React.createElement(Card,{label:'라이센스/워런티 합계',value:fmt(lcTotal)+'원',sub:fmtU(licData2026.reduce((s,d)=>s+d.usd,0)),color:'#8b5cf6'}),
-          React.createElement(Card,{label:'총 합계',value:fmt(grand)+'원',sub:fmtU(poData2026.reduce((s,d)=>s+d.usd,0)+licData2026.reduce((s,d)=>s+d.usd,0)),color:'#059669'}),
-          React.createElement(Card,{label:'미상환 L/C',value:fmtU(lcData.reduce((s,d)=>s+d.usd,0)),sub:'D-Day: '+lcData[0].dDay+'일 / '+lcData[1].dDay+'일',color:'#dc2626'}),
-          React.createElement(Card,{label:'최신 고시환율',value:'₩'+Number(fxData[fxData.length-1].rate).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}),sub:fxData[fxData.length-1].start+' ~ '+fxData[fxData.length-1].end,color:'#f59e0b'})
-        ),
-        React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}},
-          React.createElement(VendorChart),
-          React.createElement(FxChart)
-        ),
-        // Monthly
-        React.createElement('div',{style:{background:'#fff',borderRadius:10,padding:20,boxShadow:'0 1px 3px rgba(0,0,0,0.08)',marginTop:16}},
-          React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}},
-            React.createElement('div',{style:{fontSize:14,fontWeight:700,color:'#111827'}},'월별 수입원가 현황'),
-            React.createElement('div',{style:{display:'flex',gap:16,fontSize:11}},
-              React.createElement('span',{style:{display:'flex',alignItems:'center',gap:4}},React.createElement('span',{style:{width:10,height:10,borderRadius:2,background:'#3b82f6',display:'inline-block'}}),' 장비/부품'),
-              React.createElement('span',{style:{display:'flex',alignItems:'center',gap:4}},React.createElement('span',{style:{width:10,height:10,borderRadius:2,background:'#8b5cf6',display:'inline-block'}}),' 라이센스/워런티')
-            )
-          ),
-          React.createElement('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:12}},
-            React.createElement('thead',null,
-              React.createElement('tr',null,
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'left',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600,width:80}},'귀속월'),
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'left',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600}},''),
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'right',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600,width:120}},'장비/부품'),
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'right',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600,width:120}},'라이센스'),
-                React.createElement('th',{style:{padding:'6px 8px',textAlign:'right',borderBottom:'2px solid #e5e7eb',color:'#6b7280',fontWeight:600,width:130}},'합계')
-              )
-            ),
-            React.createElement('tbody',null,
-              (()=>{
-                const m={};
-                poData2026.forEach(d=>{if(!m[d.month])m[d.month]={eq:0,lc:0};m[d.month].eq+=d.total;});
-                licData2026.forEach(d=>{if(!m[d.month])m[d.month]={eq:0,lc:0};m[d.month].lc+=d.total;});
-                const sorted=Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0]));
-                const mx=Math.max(...sorted.map(([,v])=>v.eq+v.lc));
-                const grandEq=sorted.reduce((s,[,v])=>s+v.eq,0);
-                const grandLc=sorted.reduce((s,[,v])=>s+v.lc,0);
-                return [...sorted.map(([mo,v],idx)=>
-                  React.createElement('tr',{key:mo,style:{background:idx%2===0?'#fff':'#f9fafb'}},
-                    React.createElement('td',{style:{padding:'8px',fontWeight:600,color:'#111827'}},mo),
-                    React.createElement('td',{style:{padding:'8px 4px'}},
-                      React.createElement('div',{style:{display:'flex',height:18,borderRadius:3,overflow:'hidden',background:'#f3f4f6'}},
-                        v.eq>0&&React.createElement('div',{style:{width:(v.eq/mx*100)+'%',background:'#3b82f6',borderRadius:'3px 0 0 3px'}}),
-                        v.lc>0&&React.createElement('div',{style:{width:(v.lc/mx*100)+'%',background:'#8b5cf6',borderRadius:v.eq>0?'0 3px 3px 0':'3px'}})
-                      )
-                    ),
-                    React.createElement('td',{style:{padding:'8px',textAlign:'right',fontVariantNumeric:'tabular-nums',color:'#374151'}},v.eq?fmt(v.eq):'-'),
-                    React.createElement('td',{style:{padding:'8px',textAlign:'right',fontVariantNumeric:'tabular-nums',color:'#374151'}},v.lc?fmt(v.lc):'-'),
-                    React.createElement('td',{style:{padding:'8px',textAlign:'right',fontWeight:600,fontVariantNumeric:'tabular-nums',color:'#111827'}},fmt(v.eq+v.lc)+'원')
-                  )
-                ),
-                React.createElement('tr',{key:'total',style:{background:'#f0f4ff',borderTop:'2px solid #d1d5db'}},
-                  React.createElement('td',{style:{padding:'8px',fontWeight:700,color:'#1e3a5f'}},'합계'),
-                  React.createElement('td',null),
-                  React.createElement('td',{style:{padding:'8px',textAlign:'right',fontWeight:700,fontVariantNumeric:'tabular-nums',color:'#1e3a5f'}},fmt(grandEq)),
-                  React.createElement('td',{style:{padding:'8px',textAlign:'right',fontWeight:700,fontVariantNumeric:'tabular-nums',color:'#1e3a5f'}},fmt(grandLc)),
-                  React.createElement('td',{style:{padding:'8px',textAlign:'right',fontWeight:700,fontVariantNumeric:'tabular-nums',color:'#1e3a5f'}},fmt(grandEq+grandLc)+'원')
-                )];
-              })()
-            )
-          )
-        )
-      ),
+    <div className="tabs">
+      {TABS.map(t=><button key={t.id} className={'tab'+(tab===t.id?' active':'')} onClick={()=>setTab(t.id)}>{t.l}</button>)}
+    </div>
 
-      // PO TABLE
-      tab==='po' && React.createElement(React.Fragment,null,
-        React.createElement('div',{style:{display:'flex',gap:12,marginBottom:16}},
-          React.createElement('select',{value:vf,onChange:e=>setVf(e.target.value),style:{padding:'6px 12px',borderRadius:6,border:'1px solid #d1d5db',fontSize:13}},vendors.map(v=>React.createElement('option',{key:v},v))),
-          React.createElement('select',{value:tf,onChange:e=>setTf(e.target.value),style:{padding:'6px 12px',borderRadius:6,border:'1px solid #d1d5db',fontSize:13}},types.map(v=>React.createElement('option',{key:v},v))),
-          React.createElement('select',{value:mf,onChange:e=>setMf(e.target.value),style:{padding:'6px 12px',borderRadius:6,border:'1px solid #d1d5db',fontSize:13}},months.map(v=>React.createElement('option',{key:v},v))),
-          React.createElement('span',{style:{fontSize:12,color:'#6b7280',alignSelf:'center'}},filtered.length+'건')
-        ),
-        React.createElement(Table,{
-          cols:[
-            {k:'no',l:'No.',a:'center'},{k:'po',l:'PO No.'},{k:'vendor',l:'업체'},{k:'type',l:'구분'},{k:'item',l:'품명'},
-            {l:'Invoice(USD)',a:'right',r:r=>fmtU(r.usd)},{l:'적용환율',a:'right',r:r=>r.rate?Number(r.rate).toLocaleString('ko-KR',{minimumFractionDigits:1,maximumFractionDigits:1}):'-'},
-            {l:'관세',a:'right',r:r=>fmt(r.tariff)},{l:'부가세',a:'right',r:r=>fmt(r.vat)},
-            {l:'운송료',a:'right',r:r=>fmt(r.shipFee)},{l:'총 수입원가',a:'right',r:r=>fmt(r.total)},
-            {k:'qty',l:'수량',a:'center'},{l:'개당 원가',a:'right',r:r=>fmt(r.unit)},{k:'month',l:'귀속월'}
-          ],
-          data:filtered,
-          hl:r=>r.total===0
-        }),
-        React.createElement('div',{style:{marginTop:12,padding:12,background:'#f0fdf4',borderRadius:8,fontSize:12,color:'#166534'}},
-          React.createElement('strong',null,'합계: '),
-          'Invoice '+fmtU(filtered.reduce((s,d)=>s+d.usd,0))+' | 총 수입원가 '+fmt(filtered.reduce((s,d)=>s+d.total,0))+'원'
-        )
-      ),
+    {tab==='overview' && <React.Fragment>
+      <div className="cards">
+        <Card icon="cube" tone="blue" label="장비/부품 총 수입원가" value={fmt(eqTotal)+'원'} sub={fmtU(poData.reduce((s,d)=>s+d.usd,0))}/>
+        <Card icon="shield" tone="violet" label="라이센스/워런티 합계" value={fmt(lcTotal)+'원'} sub={fmtU(licData.reduce((s,d)=>s+d.usd,0))}/>
+        <Card icon="wallet" tone="green" label="총 합계" value={fmt(grand)+'원'} sub={fmtU(poData.reduce((s,d)=>s+d.usd,0)+licData.reduce((s,d)=>s+d.usd,0))}/>
+        <Card icon="clock" tone="red" label="미상환 L/C" value={fmtU(lcData.reduce((s,d)=>s+d.usd,0))} sub={lcData.map(d=>fmtD(dday(d.due))).join(' / ')}/>
+        <Card icon="trend" tone="amber" label="최신 고시환율" value={'₩'+Number(lastFx.rate).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2})} sub={lastFx.start+' ~ '+lastFx.end}/>
+      </div>
+      <div className="grid2"><VendorChart/><FxChart/></div>
+      <MonthlyTable/>
+    </React.Fragment>}
 
-      // LICENSE
-      tab==='lic' && React.createElement(React.Fragment,null,
-        React.createElement(Table,{
-          cols:[
-            {k:'no',l:'No.',a:'center'},{k:'po',l:'PO No.'},{k:'vendor',l:'업체'},{k:'type',l:'구분'},{k:'item',l:'품명'},
-            {l:'Invoice(USD)',a:'right',r:r=>fmtU(r.usd)},{k:'remit',l:'송금일'},
-            {l:'수입원가(KRW)',a:'right',r:r=>fmt(r.total)},{k:'start',l:'계약시작'},{k:'end',l:'계약종료'}
-          ],
-          data:licData2026, hl:r=>r.total===0
-        }),
-        React.createElement('div',{style:{marginTop:12,padding:12,background:'#f5f3ff',borderRadius:8,fontSize:12,color:'#5b21b6'}},
-          React.createElement('strong',null,'합계: '),
-          'Invoice '+fmtU(licData2026.reduce((s,d)=>s+d.usd,0))+' | 수입원가 '+fmt(licData2026.reduce((s,d)=>s+d.total,0))+'원'
-        )
-      ),
+    {tab==='po' && <React.Fragment>
+      <div className="filters">
+        <select value={vf} onChange={e=>setVf(e.target.value)}>{vendors.map(v=><option key={v}>{v}</option>)}</select>
+        <select value={tf} onChange={e=>setTf(e.target.value)}>{types.map(v=><option key={v}>{v}</option>)}</select>
+        <select value={mf} onChange={e=>setMf(e.target.value)}>{months.map(v=><option key={v}>{v||'미귀속'}</option>)}</select>
+        <span className="chip"><b>{filtered.length}</b>건</span>
+      </div>
+      <Table
+        cols={[
+          {k:'no',l:'No.',a:'center'},{k:'po',l:'PO No.'},{k:'vendor',l:'업체'},{k:'type',l:'구분'},{k:'item',l:'품명'},
+          {l:'Invoice(USD)',a:'right',r:r=>fmtU(r.usd)},
+          {l:'적용환율',a:'right',r:r=>r.rate?Number(r.rate).toLocaleString('ko-KR',{minimumFractionDigits:1,maximumFractionDigits:1}):'-'},
+          {l:'관세',a:'right',r:r=>fmt(r.tariff)},{l:'부가세',a:'right',r:r=>fmt(r.vat)},
+          {l:'운송료',a:'right',r:r=>fmt(r.shipFee)},
+          {l:'총 수입원가',a:'right',r:r=><b className="num">{fmt(r.total)}</b>},
+          {k:'qty',l:'수량',a:'center'},{l:'개당 원가',a:'right',r:r=>fmt(r.unit)},{k:'month',l:'귀속월'}
+        ]}
+        data={filtered} hl={r=>r.total===0}/>
+      <div className="sumbar">
+        <span className="chip">Invoice 합계 <b>{fmtU(filtered.reduce((s,d)=>s+d.usd,0))}</b></span>
+        <span className="chip">총 수입원가 <b>{fmt(filtered.reduce((s,d)=>s+d.total,0))}원</b></span>
+      </div>
+    </React.Fragment>}
 
-      // REMITTANCE
-      tab==='remit' && React.createElement(React.Fragment,null,
-        React.createElement(Table,{
-          cols:[
-            {k:'no',l:'No.',a:'center'},{k:'date',l:'송금일'},{k:'to',l:'수취인'},{k:'ref',l:'PO 참조'},
-            {l:'USD금액',a:'right',r:r=>fmtU(r.usd)},{l:'적용환율',a:'right',r:r=>r.rate?Number(r.rate).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}):'-'},
-            {l:'수수료(KRW)',a:'right',r:r=>fmt(r.fee)},{l:'전신료(KRW)',a:'right',r:r=>fmt(r.wire)},
-            {l:'KRW총액',a:'right',r:r=>fmt(r.krw)}
-          ],
-          data:remitData2026, hl:r=>r.krw===0
-        }),
-        React.createElement('div',{style:{marginTop:12,padding:12,background:'#eff6ff',borderRadius:8,fontSize:12,color:'#1e40af'}},
-          React.createElement('strong',null,'합계: '),
-          '송금 '+remitData2026.length+'건 | USD '+fmtU(remitData2026.reduce((s,d)=>s+d.usd,0))+' | KRW '+fmt(remitData2026.reduce((s,d)=>s+d.krw,0))+'원'
-        )
-      ),
+    {tab==='lic' && <React.Fragment>
+      <Table
+        cols={[
+          {k:'no',l:'No.',a:'center'},{k:'po',l:'PO No.'},{k:'vendor',l:'업체'},{k:'type',l:'구분'},{k:'item',l:'품명'},
+          {l:'Invoice(USD)',a:'right',r:r=>fmtU(r.usd)},{k:'remit',l:'송금일'},
+          {l:'수입원가(KRW)',a:'right',r:r=><b className="num">{fmt(r.total)}</b>},
+          {k:'start',l:'계약시작'},{k:'end',l:'계약종료'}
+        ]}
+        data={licData} hl={r=>r.total===0}/>
+      <div className="sumbar">
+        <span className="chip">Invoice 합계 <b>{fmtU(licData.reduce((s,d)=>s+d.usd,0))}</b></span>
+        <span className="chip">수입원가 합계 <b>{fmt(licData.reduce((s,d)=>s+d.total,0))}원</b></span>
+      </div>
+    </React.Fragment>}
 
-      // L/C
-      tab==='lc' && React.createElement(React.Fragment,null,
-        // 요약 카드
-        React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:12,marginBottom:20}},
-          React.createElement(Card,{label:'미상환 L/C 합계',value:fmtU(lcData.reduce((s,d)=>s+d.usd,0)),sub:'기준일: 2026-05-06',color:'#dc2626'}),
-          React.createElement(Card,{label:'총 L/C 한도',value:fmtU(lcBankData.reduce((s,d)=>s+d.limit,0)),sub:'신한+하나+우리',color:'#3b82f6'}),
-          React.createElement(Card,{label:'잔여 가용 한도',value:fmtU(lcBankData.reduce((s,d)=>s+d.avail,0)),sub:'활성 은행 기준',color:'#059669'}),
-          React.createElement(Card,{label:'가장 빠른 상환',value:'D-'+Math.min(...lcData.map(d=>d.dDay)),sub:lcData.reduce((a,b)=>a.dDay<b.dDay?a:b).po+' ('+lcData.reduce((a,b)=>a.dDay<b.dDay?a:b).due+')',color:'#f59e0b'})
-        ),
-        // 은행별 한도
-        React.createElement('div',{style:{fontSize:13,fontWeight:700,marginBottom:8,color:'#111827'}},'은행별 Usance L/C 한도 현황'),
-        React.createElement(Table,{
-          cols:[
-            {k:'bank',l:'은행'},{l:'총 한도(USD)',a:'right',r:r=>fmtU(r.limit)},{l:'현재 오픈(USD)',a:'right',r:r=>fmtU(r.open)},
-            {l:'잔여 가용(USD)',a:'right',r:r=>fmtU(r.avail)},
-            {l:'활성',a:'center',r:r=>React.createElement('span',{style:{color:r.active==='활성'?'#059669':'#9ca3af',fontWeight:600}},r.active)},
-            {k:'note',l:'비고'}
-          ],
-          data:lcBankData
-        }),
-        // 미상환 현황
-        React.createElement('div',{style:{fontSize:13,fontWeight:700,margin:'20px 0 8px',color:'#111827'}},'미상환 L/C 현황'),
-        React.createElement(Table,{
-          cols:[
-            {k:'no',l:'No.',a:'center'},{k:'po',l:'PO No.'},{k:'vendor',l:'업체'},
-            {l:'개설금액(USD)',a:'right',r:r=>fmtU(r.usd)},{k:'bank',l:'개설은행'},{k:'lc',l:'L/C No.'},
-            {k:'open',l:'개설일'},{k:'exp',l:'만기일'},{k:'days',l:'기간'},{k:'accept',l:'인수일'},{k:'due',l:'상환예정일'},
-            {l:'D-Day',a:'center',r:r=>React.createElement('span',{style:{padding:'2px 8px',borderRadius:12,background:r.dDay<=30?'#fef2f2':r.dDay<=60?'#fffbeb':'#f0fdf4',color:r.dDay<=30?'#dc2626':r.dDay<=60?'#d97706':'#059669',fontWeight:700,fontSize:11}},'D-'+r.dDay)}
-          ],
-          data:lcData
-        }),
-        // 수입/통관 정보
-        React.createElement('div',{style:{fontSize:13,fontWeight:700,margin:'20px 0 8px',color:'#111827'}},'수입/통관 정보'),
-        React.createElement(Table,{
-          cols:[
-            {k:'po',l:'PO No.'},{k:'decNo',l:'수입신고번호'},{k:'decDate',l:'수리일자'},
-            {l:'신고환율(₩)',a:'right',r:r=>r.decRate?r.decRate.toLocaleString():'-'},
-            {l:'관세(KRW)',a:'right',r:r=>fmt(r.tariff)},{l:'부가세(KRW)',a:'right',r:r=>fmt(r.vat)},
-            {k:'broker',l:'관세사'},{l:'관세사비',a:'right',r:r=>fmt(r.brokerFee)},
-            {k:'shipper',l:'운송사'},{l:'운송료',a:'right',r:r=>fmt(r.shipFee)},
-            {l:'해외수수료(USD)',a:'right',r:r=>fmtU(r.overseaFee)}
-          ],
-          data:lcCustomsData
-        }),
-        React.createElement('div',{style:{marginTop:10,fontSize:11,color:'#9ca3af'}},'※ 출처: 총 한도 – Slack 2024-11-19 / 활성 여부 – Slack 2026-03-16 도원석')
-      ),
+    {tab==='remit' && <React.Fragment>
+      <Table
+        cols={[
+          {k:'no',l:'No.',a:'center'},{k:'date',l:'송금일'},{k:'recipient',l:'수취인'},{k:'poRef',l:'PO 참조'},
+          {l:'USD 금액',a:'right',r:r=>fmtU(r.usd)},
+          {l:'적용환율',a:'right',r:r=>r.rate?Number(r.rate).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}):'-'},
+          {l:'중계수수료(USD)',a:'right',r:r=>r.midFeeUsd?fmtU(r.midFeeUsd):'-'},
+          {l:'수수료(KRW)',a:'right',r:r=>fmt(r.feeKrw)},
+          {l:'전신료(KRW)',a:'right',r:r=>fmt(r.cableKrw)},
+          {l:'KRW 출금총액',a:'right',r:r=><b className="num">{fmt(r.krwActual)}</b>}
+        ]}
+        data={remitData} hl={r=>!r.krwActual}/>
+      <div className="sumbar">
+        <span className="chip">송금 <b>{remitData.length}건</b></span>
+        <span className="chip">USD 합계 <b>{fmtU(remitData.reduce((s,d)=>s+d.usd,0))}</b></span>
+        <span className="chip">KRW 합계 <b>{fmt(remitData.reduce((s,d)=>s+d.krwActual,0))}원</b></span>
+      </div>
+    </React.Fragment>}
 
-      // FX
-      tab==='fx' && React.createElement(React.Fragment,null,
-        React.createElement(FxChart),
-        React.createElement(Table,{
-          cols:[
+    {tab==='lc' && <React.Fragment>
+      <div className="cards" style={{gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))'}}>
+        <Card icon="clock" tone="red" label="미상환 L/C 합계" value={fmtU(lcData.reduce((s,d)=>s+d.usd,0))} sub="기준일: 2026-05-06"/>
+        <Card icon="wallet" tone="blue" label="총 L/C 한도" value={fmtU(lcBankData.reduce((s,d)=>s+d.limit,0))} sub="신한, 하나, 우리 합산"/>
+        <Card icon="shield" tone="green" label="잔여 가용 한도" value={fmtU(lcBankData.reduce((s,d)=>s+d.avail,0))} sub="활성 은행 기준"/>
+        <Card icon="trend" tone="amber" label="가장 빠른 상환" value={fmtD(dday(minLc.due))} sub={minLc.po+' ('+minLc.due+')'}/>
+      </div>
+      <div className="sechead">은행별 Usance L/C 한도 현황</div>
+      <Table
+        cols={[
+          {k:'bank',l:'은행'},
+          {l:'총 한도(USD)',a:'right',r:r=>fmtU(r.limit)},
+          {l:'현재 오픈(USD)',a:'right',r:r=>fmtU(r.open)},
+          {l:'잔여 가용(USD)',a:'right',r:r=>fmtU(r.avail)},
+          {l:'상태',a:'center',r:r=><span className={'pill '+(r.active==='활성'?'pgreen':'pgray')}>{r.active}</span>},
+          {k:'note',l:'비고'}
+        ]}
+        data={lcBankData}/>
+      <div className="sechead">미상환 L/C 현황</div>
+      <Table
+        cols={[
+          {k:'no',l:'No.',a:'center'},{k:'po',l:'PO No.'},{k:'vendor',l:'업체'},
+          {l:'개설금액(USD)',a:'right',r:r=>fmtU(r.usd)},{k:'bank',l:'개설은행'},{k:'lc',l:'L/C No.'},
+          {k:'open',l:'개설일'},{k:'exp',l:'만기일'},{k:'days',l:'기간'},{k:'accept',l:'인수일'},{k:'due',l:'상환예정일'},
+          {l:'D-Day',a:'center',r:r=>{
+            const d = dday(r.due);
+            return <span className={'pill '+(d<=30?'pred':d<=60?'pamber':'pgreen')}>{fmtD(d)}</span>;
+          }}
+        ]}
+        data={lcData}/>
+      <div className="sechead">수입/통관 정보</div>
+      <Table
+        cols={[
+          {k:'po',l:'PO No.'},{k:'decNo',l:'수입신고번호'},{k:'decDate',l:'수리일자'},
+          {l:'신고환율(₩)',a:'right',r:r=>r.decRate?r.decRate.toLocaleString():'-'},
+          {l:'관세(KRW)',a:'right',r:r=>fmt(r.tariff)},{l:'부가세(KRW)',a:'right',r:r=>fmt(r.vat)},
+          {k:'broker',l:'관세사'},{l:'관세사비',a:'right',r:r=>fmt(r.brokerFee)},
+          {k:'shipper',l:'운송사'},{l:'운송료',a:'right',r:r=>fmt(r.shipFee)},
+          {l:'해외수수료(USD)',a:'right',r:r=>fmtU(r.overseaFee)}
+        ]}
+        data={lcCustomsData}/>
+      <div className="srcnote">출처: 총 한도는 Slack 2024-11-19, 활성 여부는 Slack 2026-03-16 도원석</div>
+    </React.Fragment>}
+
+    {tab==='fx' && <React.Fragment>
+      <FxChart tall={true}/>
+      <div style={{marginTop:13}}>
+        <Table
+          cols={[
             {k:'start',l:'적용 시작일'},{k:'end',l:'적용 종료일'},
-            {l:'수입환율 (₩/USD)',a:'right',r:r=>React.createElement('span',{style:{fontWeight:600}},Number(r.rate).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}))},
+            {l:'수입환율 (₩/USD)',a:'right',r:r=><b className="num">{Number(r.rate).toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2})}</b>},
             {l:'변동',a:'right',r:r=>{
-              const idx=fxData.indexOf(r); if(idx===0) return '-';
-              const d=r.rate-fxData[idx-1].rate;
-              return React.createElement('span',{style:{color:d>0?'#dc2626':d<0?'#059669':'#6b7280',fontWeight:600}},(d>0?'+':'')+d.toFixed(2));
+              const idx = fxData.indexOf(r);
+              if(idx===0) return '-';
+              const d = r.rate-fxData[idx-1].rate;
+              return <span className="num" style={{color:d>0?'var(--red)':d<0?'var(--green)':'var(--text2)',fontWeight:600}}>{(d>0?'+':'')+d.toFixed(2)}</span>;
             }}
-          ],
-          data:[...fxData].reverse()
-        })
-      ),
+          ]}
+          data={[...fxData].reverse()}/>
+      </div>
+    </React.Fragment>}
 
-      React.createElement('div',{style:{marginTop:24,textAlign:'center',fontSize:11,color:'#9ca3af'}},'RNR 수입원가 산출표 | 기준일 2026-06-02 | 노란색 하이라이트 = 미확인 항목')
-    )
-  );
+    <div className="foot">RNR 수입원가 산출표 | 기준일 2026-06-02 | <span className="dot" style={{background:'#fde68a'}}></span>노란색 하이라이트는 미확인 항목</div>
+  </div>;
 }
 
-ReactDOM.render(React.createElement(App), document.getElementById('root'));
+ReactDOM.render(<App/>, document.getElementById('root'));
 </script>
 </body>
 </html>
