@@ -200,12 +200,10 @@ const remitData = [
   {no:38,date:"2026.06.10",recipient:"GDC",poRef:"GPO481, GPO473-2, GPO473-3",usd:119060,rate:1525.3,midFeeUsd:20,feeKrw:12500,cableKrw:8000,krwActual:181653224}
 ];
 
-const lcData = [
-  {no:1,po:"CPO-672",vendor:"Christie",usd:221868,bank:"신한은행",lc:"M88JX2510NU00018",open:"2025-10-16",exp:"2026-04-14",days:"180 Days",accept:"2025-12-16",due:"2026-06-16",dDay:67}
-];
+const lcData = [];
 
 const lcBankData = [
-  {bank:"신한은행",limit:500000,open:221868,avail:278132,active:"활성",note:"GPO-446-2 6/9 상환 완료, CPO-672만 잔존"},
+  {bank:"신한은행",limit:500000,open:0,avail:500000,active:"활성",note:"CPO-672 6/16 상환 완료, GPO-446-2 6/9 상환 완료 — 미상환 없음"},
   {bank:"하나은행",limit:200000,open:0,avail:200000,active:"활성",note:"현재 미사용"},
   {bank:"우리은행",limit:700000,open:0,avail:700000,active:"비활성",note:"신한, 하나만 활성 (Slack 2026-03-16)"},
 ];
@@ -252,7 +250,8 @@ const fxData = [
   {start:"2026-05-17",end:"2026-05-23",rate:1482.04},
   {start:"2026-05-24",end:"2026-05-30",rate:1504.04},
   {start:"2026-05-31",end:"2026-06-06",rate:1507.15},
-  {start:"2026-06-07",end:"2026-06-13",rate:1514.68}
+  {start:"2026-06-07",end:"2026-06-13",rate:1514.68},
+  {start:"2026-06-14",end:"2026-06-20",rate:1531.46}
 ];
 
 // ==== Icons ====
@@ -448,7 +447,7 @@ function App(){
         <div className="logo">RNR</div>
         <div>
           <h1>2026년 수입원가 산출표</h1>
-          <div className="subtitle">기준일 2026-06-10 | 회계처리용 통합 데이터</div>
+          <div className="subtitle">기준일 2026-06-16 | 회계처리용 통합 데이터</div>
         </div>
       </div>
       <div className="linkbtns">
@@ -593,7 +592,7 @@ function App(){
       </div>
     </React.Fragment>}
 
-    <div className="foot">RNR 수입원가 산출표 | 기준일 2026-06-10 | <span className="dot" style={{background:'#fde68a'}}></span>노란색 하이라이트는 미확인 항목</div>
+    <div className="foot">RNR 수입원가 산출표 | 기준일 2026-06-16 | <span className="dot" style={{background:'#fde68a'}}></span>노란색 하이라이트는 미확인 항목</div>
   </div>;
 }
 
