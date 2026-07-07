@@ -213,7 +213,7 @@ const remitData = [
 const lcData = [];
 
 const lcBankData = [
-  {bank:"신한은행",limit:500000,open:0,avail:500000,active:"활성",note:"CPO-672 6/16 상환 완료, GPO-446-2 6/9 상환 완료 — 미상환 없음"},
+  {bank:"신한은행",limit:500000,open:0,avail:500000,active:"활성",note:"CPO-672 6/16 상환 완료, GPO-446-2 6/9 상환 완료, 미상환 없음"},
   {bank:"하나은행",limit:200000,open:0,avail:200000,active:"활성",note:"현재 미사용"},
   {bank:"우리은행",limit:700000,open:0,avail:700000,active:"비활성",note:"신한, 하나만 활성 (Slack 2026-03-16)"},
 ];
@@ -333,7 +333,7 @@ function FxChart({tall}){
   const lastIdx = pts.length-1;
   return <Panel title="관세청 주간 고시환율 추이 (USD/KRW)"
     right={<span className="fxdelta" style={{color:delta>0?'var(--red)':delta<0?'var(--green)':'var(--text3)'}}>{(delta>0?'+':'')+delta.toFixed(2)} 전주 대비</span>}>
-    <svg viewBox={'0 0 '+w+' '+h} style={{width:'100%'}}>
+    <svg viewBox={'0 0 '+w+' '+h} style={{width:'100%',maxWidth:tall?'720px':'100%',display:'block',margin:'0 auto'}}>
       <defs>
         <linearGradient id="fxg" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#2563eb" stopOpacity="0.16"/>
