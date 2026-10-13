@@ -312,6 +312,9 @@ const fxData = [
   {start:"2026-09-06",end:"2026-09-12",rate:1369.86},
   {start:"2026-09-13",end:"2026-09-19",rate:1343},
   {start:"2026-09-20",end:"2026-09-26",rate:1358.72},
+  {start:"2026-09-27",end:"2026-10-03",rate:1376.03},
+  {start:"2026-10-04",end:"2026-10-10",rate:1357.14},
+  {start:"2026-10-11",end:"2026-10-17",rate:1347.03},
 ];
 
 // ==== Icons ====
@@ -507,7 +510,7 @@ function App(){
         <div className="logo">RNR</div>
         <div>
           <h1>2026년 수입원가 산출표</h1>
-          <div className="subtitle">기준일 2026-09-22 | 회계처리용 통합 데이터</div>
+          <div className="subtitle">기준일 2026-10-13 | 회계처리용 통합 데이터</div>
         </div>
       </div>
       <div className="linkbtns">
@@ -592,7 +595,7 @@ function App(){
 
     {tab==='lc' && <React.Fragment>
       <div className="cards" style={{gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))'}}>
-        <Card icon="clock" tone="red" label="미상환 L/C 합계" value={fmtU(lcData.reduce((s,d)=>s+d.usd,0))} sub="기준일: 2026-09-22"/>
+        <Card icon="clock" tone="red" label="미상환 L/C 합계" value={fmtU(lcData.reduce((s,d)=>s+d.usd,0))} sub="기준일: 2026-10-13"/>
         <Card icon="wallet" tone="blue" label="총 L/C 한도" value={fmtU(lcBankData.reduce((s,d)=>s+d.limit,0))} sub="신한, 하나, 우리 합산"/>
         <Card icon="shield" tone="green" label="잔여 가용 한도" value={fmtU(lcBankData.reduce((s,d)=>s+d.avail,0))} sub="활성 은행 기준"/>
         <Card icon="trend" tone="amber" label="가장 빠른 상환" value={minLc?fmtD(dday(minLc.due)):'-'} sub={minLc?minLc.po+' ('+minLc.due+')':'미상환 없음'}/>
@@ -652,7 +655,7 @@ function App(){
       </div>
     </React.Fragment>}
 
-    <div className="foot">RNR 수입원가 산출표 | 기준일 2026-09-22 | <span className="dot" style={{background:'#fde68a'}}></span>노란색 하이라이트는 미확인 항목</div>
+    <div className="foot">RNR 수입원가 산출표 | 기준일 2026-10-13 | <span className="dot" style={{background:'#fde68a'}}></span>노란색 하이라이트는 미확인 항목</div>
   </div>;
 }
 
